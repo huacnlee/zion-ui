@@ -2,6 +2,8 @@
 
 Dark, quiet presentation components for [gpui-shell](https://github.com/longbridge/gpui-kit) applications: near-black surfaces stepped by lightness, one muted phosphor accent, sans-serif for words and monospace for data, and cards that nest an inset body inside a darker shell.
 
+<img width="1923" height="1331" alt="image" src="https://github.com/user-attachments/assets/665c2986-9102-43c6-ad92-27dee93d7826" />
+
 The library owns presentation. The application owns copy, stable ids, callbacks, state and asset paths, and passes them in.
 
 ## Use it
