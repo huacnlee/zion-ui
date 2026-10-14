@@ -65,7 +65,10 @@ export class AppFrame {
         .on_mouse_up("left", (_event, cx) => { if (drags.delete(id)) cx.notify(); }))
       // The column keeps the sidebar at full width inside a clipping box that
       // animates, so the navigation slides rather than reflowing as it goes.
-      .when(Boolean(sidebar), (el) => el.child(div().flex_shrink_0().h_full().overflow_hidden().w(open ? width : 0)
+      // A transition follows its element by id; without one the runtime keys
+      // it by build order, and any element added or removed before the column
+      // (a toggle moving between sidebar and header) would reset the slide.
+      .when(Boolean(sidebar), (el) => el.child(div().id(`${id}-sidebar`).flex_shrink_0().h_full().overflow_hidden().w(open ? width : 0)
         .when(!dragging, (el) => el.transition("width", SLIDE))
         .child(v_flex().w(width).h_full().min_h_0().child(sidebar))))
       .when(open && Boolean(resize), (el) => el.child(div().id(`${id}-resize`).w(6).h_full().flex_shrink_0().cursor_col_resize()
@@ -237,11 +240,13 @@ export class PageHeader {
     const size = this.#compact ? t.type.heading : t.type.display;
     return h_flex().w_full().flex_shrink_0().px(this.#compact ? 16 : 24).pt(this.#compact ? 12 : 18).pb(this.#compact ? 10 : 14).gap(12).items_end()
       .child(v_flex().flex_1().min_w_0().gap(4)
+        // A leading control starts the first line: the breadcrumb, or the
+        // title when there is none.
         .when(this.#breadcrumb.length > 0, (el) => el.child(h_flex().gap(6).items_center().text_size(t.type.small).text_color(c.secondary)
+          .when(Boolean(leading), (el) => el.child(div().flex_shrink_0().mr(2).child(leading)))
           .children(this.#breadcrumb.flatMap((part, index) => index ? [div().text_color(c.tertiary).child("/"), div().child(part)] : [div().child(part)]))))
         .child(h_flex().min_w_0().gap(10).items_center()
-          // A leading control lines up with the title, not with the breadcrumb.
-          .when(Boolean(leading), (el) => el.child(div().flex_shrink_0().child(leading)))
+          .when(Boolean(leading) && this.#breadcrumb.length === 0, (el) => el.child(div().flex_shrink_0().child(leading)))
           // The title keeps a readable minimum; the meta text gives way first.
           .child(div().min_w(96).flex_shrink(1).truncate().text_size(size).font_medium().text_color(c.bright).child(this.#title))
           .when(Boolean(badge), (el) => el.child(badge))

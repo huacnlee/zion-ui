@@ -147,6 +147,8 @@ test("the sidebar slides shut by width and resizes within its bounds", () => {
   const column = descendants(open).find((item) => calls(item, "transition").length > 0);
   expect(arg(column, "w")).toBe(360);
   expect(calls(column, "transition")[0].args[0]).toBe("width");
+  // A stable id keeps the slide when siblings before the column come and go.
+  expect(arg(column, "id")).toBe("app-sidebar");
   const shut = frame().collapsed().build(cx);
   expect(arg(descendants(shut).find((item) => calls(item, "transition").length > 0), "w")).toBe(0);
   const handle = descendants(open).find((item) => calls(item, "cursor_col_resize").length > 0);
