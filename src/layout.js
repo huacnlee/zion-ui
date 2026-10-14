@@ -5,15 +5,24 @@ import { Button as BaseButton, h_flex, v_flex } from "gpui-base";
 import { optionalCallback, optionalRenderable, optionalText, requiredRenderable, requiredRenderables, requiredText, stableId } from "./internal.js";
 import { theme } from "./theme.js";
 
+/** The sidebar drag in progress, per frame id: where it started. */
+const drags = new Map();
+const SLIDE = /** @type {const} */ ({ duration: 200, easing: "ease-out" });
+
 /**
  * The window: navigation on the canvas, and the work in a deeper rounded panel
- * inset from the window's edges.
+ * inset from the window's edges. The sidebar can collapse, sliding shut, and
+ * can be dragged wider or narrower; its width belongs to the application,
+ * which receives every change and passes the current width back in.
  */
 export class AppFrame {
   #id;
   #sidebar;
   #main;
   #sidebarWidth = 232;
+  #collapsed = false;
+  /** @type {{ min: number, max: number, onResize: (width: number, cx: import("gpui-kit").Context) => void } | undefined} */
+  #resize;
 
   /** @param {string} id */
   constructor(id) { this.#id = stableId("AppFrame", id); }
@@ -23,16 +32,46 @@ export class AppFrame {
   main(element) { this.#main = element; return this; }
   /** @param {number} pixels */
   sidebarWidth(pixels) { this.#sidebarWidth = pixels; return this; }
+  /** Slide the sidebar shut; it keeps its width for when it opens. @param {boolean} [value] */
+  collapsed(value = true) { this.#collapsed = value; return this; }
+  /**
+   * Let the sidebar's edge be dragged. `onResize` receives each new width,
+   * already clamped to `min`…`max`; store it and pass it back to `sidebarWidth`.
+   * @param {{ min?: number, max?: number, onResize: (width: number, cx: import("gpui-kit").Context) => void }} options
+   */
+  resizable(options) {
+    const onResize = optionalCallback("AppFrame", "onResize", options?.onResize);
+    if (!onResize) throw new Error("AppFrame resizable needs an onResize callback");
+    this.#resize = { min: options.min ?? 180, max: options.max ?? 420, onResize };
+    return this;
+  }
 
   /** @param {import("gpui-kit").Context} _cx */
   build(_cx) {
-    const t = theme(), c = t.colors;
+    const t = theme(), c = t.colors, id = this.#id, resize = this.#resize;
     const sidebar = optionalRenderable("AppFrame", "sidebar", this.#sidebar);
     const main = requiredRenderable("AppFrame", "main", this.#main);
-    return h_flex().id(this.#id).size_full().min_w_0().items_stretch().bg(c.canvas).text_color(c.foreground)
+    const width = resize ? Math.min(resize.max, Math.max(resize.min, this.#sidebarWidth)) : this.#sidebarWidth;
+    const open = Boolean(sidebar) && !this.#collapsed, dragging = drags.has(id);
+    return h_flex().id(id).size_full().min_w_0().items_stretch().bg(c.canvas).text_color(c.foreground)
       .when(Boolean(t.fonts.sans), (el) => el.font_family(t.fonts.sans))
-      .when(Boolean(sidebar), (el) => el.child(v_flex().w(this.#sidebarWidth).flex_shrink_0().min_h_0().child(sidebar)))
-      .child(div().flex_1().min_w_0().min_h_0().p(6).when(Boolean(sidebar), (el) => el.pl(0))
+      .when(Boolean(resize), (el) => el
+        .on_mouse_move((event, cx) => {
+          const drag = drags.get(id);
+          if (!drag) return;
+          const next = Math.round(Math.min(resize.max, Math.max(resize.min, drag.width + event.position.x - drag.x)));
+          if (next !== drag.last) { drag.last = next; resize.onResize(next, cx); }
+        })
+        .on_mouse_up("left", (_event, cx) => { if (drags.delete(id)) cx.notify(); }))
+      // The column keeps the sidebar at full width inside a clipping box that
+      // animates, so the navigation slides rather than reflowing as it goes.
+      .when(Boolean(sidebar), (el) => el.child(div().flex_shrink_0().h_full().overflow_hidden().w(open ? width : 0)
+        .when(!dragging, (el) => el.transition("width", SLIDE))
+        .child(v_flex().w(width).h_full().min_h_0().child(sidebar))))
+      .when(open && Boolean(resize), (el) => el.child(div().id(`${id}-resize`).w(6).h_full().flex_shrink_0().cursor_col_resize()
+        .on_mouse_down("left", (event, cx) => { drags.set(id, { x: event.position.x, width, last: width }); cx.notify(); })
+        .child(div().mx(2).w(2).h_full().rounded(1).bg(dragging ? c.borderStrong : c.clear).hover((style) => style.bg(c.border)))))
+      .child(div().flex_1().min_w_0().min_h_0().p(6).when(open, (el) => el.pl(0))
         .child(v_flex().size_full().min_h_0().rounded(t.radius.main).bg(c.main).border(1).border_color(c.border).overflow_hidden().child(main)));
   }
 }
@@ -165,9 +204,15 @@ export class PageHeader {
   /** @type {any[]} */
   #actions = [];
   #meta;
+  #leading;
+  #compact = false;
 
   /** @param {string} title */
   constructor(title) { this.#title = requiredText("PageHeader", "title", title); }
+  /** A control before the title, such as the sidebar toggle. @param {any} element */
+  leading(element) { this.#leading = element; return this; }
+  /** A smaller title, for pages whose title is content, such as a document or chat name. */
+  compact() { this.#compact = true; return this; }
   /** @param {string[]} parts */
   breadcrumb(parts) { this.#breadcrumb = parts.map((part) => requiredText("PageHeader", "breadcrumb part", part)); return this; }
   /** @param {any} element usually a built `Badge` */
@@ -183,14 +228,18 @@ export class PageHeader {
     const badge = optionalRenderable("PageHeader", "badge", this.#badge);
     const actions = requiredRenderables("PageHeader", "actions", this.#actions);
     const meta = optionalText("PageHeader", "meta", this.#meta);
-    return h_flex().w_full().flex_shrink_0().px(24).pt(18).pb(14).gap(16).items_end()
+    const leading = optionalRenderable("PageHeader", "leading", this.#leading);
+    const size = this.#compact ? t.type.heading : t.type.display;
+    return h_flex().w_full().flex_shrink_0().px(this.#compact ? 16 : 24).pt(this.#compact ? 12 : 18).pb(this.#compact ? 10 : 14).gap(12).items_end()
+      .when(Boolean(leading), (el) => el.child(div().flex_shrink_0().child(leading)))
       .child(v_flex().flex_1().min_w_0().gap(4)
         .when(this.#breadcrumb.length > 0, (el) => el.child(h_flex().gap(6).items_center().text_size(t.type.small).text_color(c.secondary)
           .children(this.#breadcrumb.flatMap((part, index) => index ? [div().text_color(c.tertiary).child("/"), div().child(part)] : [div().child(part)]))))
         .child(h_flex().min_w_0().gap(10).items_center()
-          .child(div().min_w_0().truncate().text_size(t.type.display).font_medium().text_color(c.bright).child(this.#title))
+          // The title keeps a readable minimum; the meta text gives way first.
+          .child(div().min_w(96).flex_shrink(1).truncate().text_size(size).font_medium().text_color(c.bright).child(this.#title))
           .when(Boolean(badge), (el) => el.child(badge))
-          .when(Boolean(meta), (el) => el.child(div().flex_shrink_0().text_size(t.type.body).text_color(c.secondary).child(meta)))))
+          .when(Boolean(meta), (el) => el.child(div().min_w_0().flex_shrink(6).truncate().text_size(t.type.body).text_color(c.secondary).child(meta)))))
       .when(actions.length > 0, (el) => el.child(h_flex().flex_shrink_0().gap(8).items_center().children(actions)));
   }
 }

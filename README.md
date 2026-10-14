@@ -82,7 +82,7 @@ Every tone — `accent`, `success`, `warning`, `danger`, `info`, `neutral` — d
 
 ## Components
 
-**Layout** — `AppFrame` (navigation beside an inset rounded main panel), `Sidebar` (brand, search, items, footer), `NavSection`, `NavItem` (icon, count, activity dot, selected fill, context-menu press), `PageHeader` (breadcrumb, large title, badge, actions), `Card` (dashed emblem, title, subtitle, trailing slot, inset body, footer), `IconBadge`, `Divider`.
+**Layout** — `AppFrame` (navigation beside an inset rounded main panel; the sidebar slides shut with `collapsed()` and drags wider or narrower with `resizable()`), `Sidebar` (brand, search, items, footer), `NavSection`, `NavItem` (icon, count, activity dot, selected fill, context-menu press), `PageHeader` (leading control, breadcrumb, title — large or `compact()` — badge, meta, actions), `Card` (dashed emblem, title, subtitle, trailing slot, inset body, footer), `IconBadge`, `Divider`.
 
 **Controls** — `Button` (`primary` light, `secondary` dark, `outline`, `ghost`, `danger`, `accent`; three sizes; uppercase footer form), `IconButton` (with selected toggle state), `Segmented`, `Chip` (selectable, removable), `Kbd`, `SearchField` (icon, application `InputState`, key hint), `ToggleRow`, `MenuList` (icons, meta, checks, separators, keyboard cursor), `SelectTrigger`.
 

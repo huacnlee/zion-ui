@@ -137,6 +137,27 @@ test("the frame insets a rounded main panel beside the navigation", () => {
   expect(texts(frame)).toEqual(expect.arrayContaining(["Studio", "Recent", "Home", "3"]));
 });
 
+test("the sidebar slides shut by width and resizes within its bounds", () => {
+  /** @type {number[]} */
+  const widths = [];
+  const frame = () => new AppFrame("app").sidebar(el("nav")).main(el("main")).sidebarWidth(500)
+    .resizable({ min: 180, max: 360, onResize: (width) => widths.push(width) });
+  const open = frame().build(cx);
+  const column = descendants(open).find((item) => calls(item, "transition").length > 0);
+  expect(arg(column, "w")).toBe(360);
+  expect(calls(column, "transition")[0].args[0]).toBe("width");
+  const shut = frame().collapsed().build(cx);
+  expect(arg(descendants(shut).find((item) => calls(item, "transition").length > 0), "w")).toBe(0);
+  const handle = descendants(open).find((item) => calls(item, "cursor_col_resize").length > 0);
+  calls(handle, "on_mouse_down")[0].args[1]({ position: { x: 100 } }, cx);
+  const dragging = frame().build(cx);
+  expect(descendants(dragging).some((item) => calls(item, "transition").length > 0)).toBe(false);
+  calls(dragging, "on_mouse_move")[0].args[0]({ position: { x: 40 } }, cx);
+  expect(widths).toEqual([300]);
+  calls(dragging, "on_mouse_up")[0].args[1]({}, cx);
+  expect(() => new AppFrame("x").resizable({})).toThrow(/onResize/);
+});
+
 test("nav items expose a secondary press for context menus", () => {
   /** @type {string[]} */
   const pressed = [];
@@ -169,6 +190,7 @@ test("everything else builds with its content", () => {
     new SelectTrigger("model").label("Model").value("sonnet").mono().open().build(cx),
     new SelectTrigger("chevron").value("sonnet").chevron("icons/chevron-down.svg").build(cx),
     new PageHeader("Overview").breadcrumb(["Gallery", "Home"]).badge(new Badge("Live").build(cx)).actions([el("action")]).build(cx),
+    new PageHeader("A long chat title").leading(el("toggle")).compact().meta("4 messages").build(cx),
     new IconBadge("icons/calendar.svg").build(cx),
     new MetricTile("HVAC").value("3.4 kW").caption("Heating and cooling").badge(new Badge("HIGH").tone("danger").build(cx)).meter(0.9).tone("danger").footnote("Top 10%").build(cx),
     new EmptyState("No schedules yet").description("Add a schedule to start.").art(new IconBadge("icons/calendar.svg").build(cx)).children([el("action")]).build(cx),
@@ -179,7 +201,8 @@ test("everything else builds with its content", () => {
   ];
   expect(built.every((item) => item && item.calls.length > 0)).toBe(true);
   expect(texts(built[2])).toEqual(["Ctrl K"]);
-  expect(texts(built[14])).toEqual(["BATTERY MODE"]);
+  expect(texts(built[15])).toEqual(["BATTERY MODE"]);
   expect(named(built[6], "svg")[0].args[0]).toBe("icons/chevron-down.svg");
+  expect(named(built[8], "toggle")).toHaveLength(1);
   expect(arg(built[2], "h")).toBe(18);
 });

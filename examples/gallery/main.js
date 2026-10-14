@@ -23,6 +23,8 @@ export default class Gallery extends View {
   init(_props, _cx) {
     applyTheme();
     this.page = "overview";
+    this.sidebarOpen = true;
+    this.sidebarWidth = 232;
     this.range = "day";
     this.filters = new Set(["after sunset"]);
     this.precool = true;
@@ -51,7 +53,9 @@ export default class Gallery extends View {
       .build(cx);
 
     const main = v_flex().size_full().min_h_0()
-      .child(new PageHeader("Overview").breadcrumb(["Gallery", "Home energy"]).badge(new Badge("Online").tone("accent").dot().build(cx))
+      .child(new PageHeader("Overview").breadcrumb(["Gallery", "Home energy"])
+        .leading(new IconButton("toggle-sidebar").icon(icon("panel-left")).description("Toggle sidebar").selected(this.sidebarOpen)
+          .onClick((_event, cx) => { this.sidebarOpen = !this.sidebarOpen; cx.notify(); }).build(cx)).badge(new Badge("Online").tone("accent").dot().build(cx))
         .actions([
           new Button("export").label("Export").icon(icon("share")).variant("outline").build(cx),
           new IconButton("layout").icon(icon("list")).description("Change layout").variant("secondary").build(cx),
@@ -66,7 +70,9 @@ export default class Gallery extends View {
             .child(this.inverter(cx))
             .child(this.schedules(cx)))));
 
-    return new AppFrame("gallery").sidebar(sidebar).main(main).build(cx);
+    return new AppFrame("gallery").sidebar(sidebar).main(main).collapsed(!this.sidebarOpen).sidebarWidth(this.sidebarWidth)
+      .resizable({ min: 180, max: 360, onResize: (width, cx) => { this.sidebarWidth = width; cx.notify(); } })
+      .build(cx);
   }
 
   output(cx) {

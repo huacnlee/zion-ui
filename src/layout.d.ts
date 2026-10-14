@@ -1,6 +1,8 @@
 /**
  * The window: navigation on the canvas, and the work in a deeper rounded panel
- * inset from the window's edges.
+ * inset from the window's edges. The sidebar can collapse, sliding shut, and
+ * can be dragged wider or narrower; its width belongs to the application,
+ * which receives every change and passes the current width back in.
  */
 export declare class AppFrame {
     #private;
@@ -12,6 +14,18 @@ export declare class AppFrame {
     main(element: any): this;
     /** @param {number} pixels */
     sidebarWidth(pixels: number): this;
+    /** Slide the sidebar shut; it keeps its width for when it opens. @param {boolean} [value] */
+    collapsed(value?: boolean): this;
+    /**
+     * Let the sidebar's edge be dragged. `onResize` receives each new width,
+     * already clamped to `min`…`max`; store it and pass it back to `sidebarWidth`.
+     * @param {{ min?: number, max?: number, onResize: (width: number, cx: import("gpui-kit").Context) => void }} options
+     */
+    resizable(options: {
+        min?: number;
+        max?: number;
+        onResize: (width: number, cx: import("gpui-kit").Context) => void;
+    }): this;
     /** @param {import("gpui-kit").Context} _cx */
     build(_cx: import("gpui-kit").Context): import("gpui-kit").Element;
 }
@@ -78,6 +92,10 @@ export declare class PageHeader {
     #private;
     /** @param {string} title */
     constructor(title: string);
+    /** A control before the title, such as the sidebar toggle. @param {any} element */
+    leading(element: any): this;
+    /** A smaller title, for pages whose title is content, such as a document or chat name. */
+    compact(): this;
     /** @param {string[]} parts */
     breadcrumb(parts: string[]): this;
     /** @param {any} element usually a built `Badge` */
