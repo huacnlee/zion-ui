@@ -167,6 +167,7 @@ test("everything else builds with its content", () => {
     new Tag("12 circuits").build(cx),
     new SearchField("search", {}).icon("icons/search.svg").hint("Ctrl K").build(cx),
     new SelectTrigger("model").label("Model").value("sonnet").mono().open().build(cx),
+    new SelectTrigger("chevron").value("sonnet").chevron("icons/chevron-down.svg").build(cx),
     new PageHeader("Overview").breadcrumb(["Gallery", "Home"]).badge(new Badge("Live").build(cx)).actions([el("action")]).build(cx),
     new IconBadge("icons/calendar.svg").build(cx),
     new MetricTile("HVAC").value("3.4 kW").caption("Heating and cooling").badge(new Badge("HIGH").tone("danger").build(cx)).meter(0.9).tone("danger").footnote("Top 10%").build(cx),
@@ -178,6 +179,7 @@ test("everything else builds with its content", () => {
   ];
   expect(built.every((item) => item && item.calls.length > 0)).toBe(true);
   expect(texts(built[2])).toEqual(["Ctrl K"]);
-  expect(texts(built[13])).toEqual(["BATTERY MODE"]);
+  expect(texts(built[14])).toEqual(["BATTERY MODE"]);
+  expect(named(built[6], "svg")[0].args[0]).toBe("icons/chevron-down.svg");
   expect(arg(built[2], "h")).toBe(18);
 });

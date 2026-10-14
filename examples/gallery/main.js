@@ -106,7 +106,7 @@ export default class Gallery extends View {
         .child(new ToggleRow("notify").title("Notify on export").checked(this.notify)
           .onChange((value, cx) => { this.notify = value; cx.notify(); }).build(cx))
         .child(new SectionLabel("Battery mode").build(cx))
-        .child(Popup.new("mode-popup", new SelectTrigger("mode").value(current.label).open(this.selectOpen)
+        .child(Popup.new("mode-popup", new SelectTrigger("mode").value(current.label).chevron(icon("chevron-down")).open(this.selectOpen)
             .onClick((_event, cx) => { this.selectOpen = !this.selectOpen; cx.notify(); }).build(cx))
           .anchor("top_left")
           .when(this.selectOpen, (el) => el.content(new MenuList("mode-list").width(240).items(modes.map((item) => ({

@@ -189,6 +189,12 @@ export declare class SelectTrigger {
     #private;
     /** @param {string} id */
     constructor(id: string);
+    /**
+     * A downward chevron SVG. Glyphs sit on the text baseline and read low, so
+     * an icon is what lines up with the value; without one a glyph is used.
+     * @param {string} asset
+     */
+    chevron(asset: string): this;
     /** @param {string} text */
     label(text: string): this;
     /** @param {string} text */

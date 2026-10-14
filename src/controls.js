@@ -414,11 +414,18 @@ export class SelectTrigger {
   #full = false;
   #open = false;
   #disabled = false;
+  #chevron;
   /** @type {ClickHandler | undefined} */
   #onClick;
 
   /** @param {string} id */
   constructor(id) { this.#id = stableId("SelectTrigger", id); }
+  /**
+   * A downward chevron SVG. Glyphs sit on the text baseline and read low, so
+   * an icon is what lines up with the value; without one a glyph is used.
+   * @param {string} asset
+   */
+  chevron(asset) { this.#chevron = asset; return this; }
   /** @param {string} text */
   label(text) { this.#label = text; return this; }
   /** @param {string} text */
@@ -447,6 +454,8 @@ export class SelectTrigger {
       .child(h_flex().size_full().gap(8).items_center()
         .when(Boolean(label), (el) => el.child(div().flex_1().text_size(t.type.body).text_color(c.secondary).child(label)))
         .child(div().when(!label, (el) => el.flex_1()).min_w_0().truncate().text_size(t.type.body).text_color(c.bright).when(this.#mono, (el) => el.font_family(t.fonts.mono)).child(value))
-        .child(div().text_size(t.type.small).text_color(c.secondary).child(this.#open ? "⌃" : "⌄")));
+        .child(this.#chevron
+          ? div().flex_shrink_0().text_color(c.secondary).when(this.#open, (el) => el.text_color(c.foreground)).child(svg(this.#chevron).size(12))
+          : div().text_size(t.type.small).text_color(c.secondary).child(this.#open ? "⌃" : "⌄")));
   }
 }
