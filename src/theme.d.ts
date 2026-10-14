@@ -18,8 +18,8 @@ export declare function mix(color: string, toward: string, amount: number): Colo
  */
 export declare function alpha(color: string, opacity: number): Color;
 /**
- * Ember, the default theme: neutral graphite surfaces and one warm gold
- * accent, like the last glow in a dark fire.
+ * Zion, the default theme: neutral graphite surfaces and one warm gold
+ * accent.
  *
  * Surfaces step by lightness, not by hue, so a screen keeps one temperature and
  * the accent is the only warm thing on it. `canvas` is what navigation sits on,
@@ -122,7 +122,7 @@ export declare function theme(): {
  * colors Zion components read.
  *
  * @param {{ theme?: string, palette?: Partial<typeof DEFAULT_PALETTE>, accent?: string, mono?: string, sans?: string }} [options]
- *   `theme` names one of `THEMES` (default `ember`); `palette` overrides
+ *   `theme` names one of `THEMES` (default `zion`); `palette` overrides
  *   its roles and `accent` is shorthand for `palette.accent`; `mono` names the
  *   monospace family, which an application usually resolves from the system.
  */

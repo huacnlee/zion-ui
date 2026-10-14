@@ -43,8 +43,8 @@ export function alpha(color, opacity) {
 }
 
 /**
- * Ember, the default theme: neutral graphite surfaces and one warm gold
- * accent, like the last glow in a dark fire.
+ * Zion, the default theme: neutral graphite surfaces and one warm gold
+ * accent.
  *
  * Surfaces step by lightness, not by hue, so a screen keeps one temperature and
  * the accent is the only warm thing on it. `canvas` is what navigation sits on,
@@ -78,7 +78,7 @@ export const DEFAULT_PALETTE = Object.freeze({
  * Named themes. Each is a complete palette, so switching never mixes two.
  * @type {Readonly<Record<string, Readonly<Record<PaletteRole, string>>>>}
  */
-export const THEMES = Object.freeze({ ember: DEFAULT_PALETTE });
+export const THEMES = Object.freeze({ zion: DEFAULT_PALETTE });
 
 /** Radii nest: the main panel, cards in it, wells in those, then controls. */
 export const RADIUS = Object.freeze({ main: 18, card: 16, well: 12, control: 10, chip: 8, pill: 999 });
@@ -138,7 +138,7 @@ function derive(name, palette, fonts) {
  * `applyTheme` and one `cx.notify()` restyle the whole window.
  */
 export function theme() {
-  if (!active) active = derive("ember", {}, {});
+  if (!active) active = derive("zion", {}, {});
   return active;
 }
 
@@ -148,13 +148,13 @@ export function theme() {
  * colors Zion components read.
  *
  * @param {{ theme?: string, palette?: Partial<typeof DEFAULT_PALETTE>, accent?: string, mono?: string, sans?: string }} [options]
- *   `theme` names one of `THEMES` (default `ember`); `palette` overrides
+ *   `theme` names one of `THEMES` (default `zion`); `palette` overrides
  *   its roles and `accent` is shorthand for `palette.accent`; `mono` names the
  *   monospace family, which an application usually resolves from the system.
  */
 export function applyTheme(options = {}) {
   const palette = { ...options.palette, ...(options.accent ? { accent: options.accent } : {}) };
-  active = derive(options.theme ?? "ember", palette, { mono: options.mono, sans: options.sans });
+  active = derive(options.theme ?? "zion", palette, { mono: options.mono, sans: options.sans });
   const c = active.colors;
   set_theme({
     appearance: "dark",

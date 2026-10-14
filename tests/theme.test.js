@@ -42,9 +42,9 @@ test("mix and alpha", () => {
   expect(alpha("#123456", 2)).toBe("#123456ff");
 });
 
-test("themes are named; ember is the default and unknown names are refused", () => {
-  expect(Object.keys(THEMES)).toEqual(["ember"]);
-  expect(theme().name).toBe("ember");
-  expect(applyTheme({ theme: "ember" }).colors.accent).toBe(THEMES.ember.accent);
-  expect(() => applyTheme({ theme: "plain" })).toThrow(/ember/);
+test("themes are named; zion is the default and unknown names are refused", () => {
+  expect(Object.keys(THEMES)).toEqual(["zion"]);
+  expect(theme().name).toBe("zion");
+  expect(applyTheme({ theme: "zion" }).colors.accent).toBe(THEMES.zion.accent);
+  expect(() => applyTheme({ theme: "plain" })).toThrow(/zion/);
 });
