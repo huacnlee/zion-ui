@@ -5,7 +5,7 @@ import { arg, calls, cx, descendants, named, texts } from "./helpers.js";
 import {
   AppFrame, Badge, Button, Tag, Callout, Card, Chip, Divider, EmptyState, IconBadge, IconButton, Kbd, Legend,
   MenuList, Meter, MetricTile, Mono, NavItem, NavSection, PageHeader, PropertyList, SearchField, SectionLabel,
-  SegmentBar, Segmented, SelectTrigger, Sidebar, Stat, StatStrip, Steps, TickBar, ToggleRow, ToneTile, applyTheme, theme,
+  SegmentBar, Segmented, Pulse, ScanLine, SelectTrigger, Sidebar, Stat, StatStrip, Steps, TickBar, ToggleRow, ToneTile, applyTheme, theme,
 } from "zion-ui";
 
 beforeEach(() => applyTheme());
@@ -208,4 +208,17 @@ test("everything else builds with its content", () => {
   expect(named(built[6], "svg")[0].args[0]).toBe("icons/chevron-down.svg");
   expect(named(built[8], "toggle")).toHaveLength(1);
   expect(arg(built[2], "h")).toBe(18);
+});
+
+test("pulse and scan line move by step, through native transitions on stable ids", () => {
+  const dots = (step) => descendants(new Pulse("wait").step(step).build(cx));
+  expect(dots(0).map((dot) => arg(dot, "opacity"))).toEqual([1, 0.22, 0.22]);
+  expect(dots(4).map((dot) => arg(dot, "opacity"))).toEqual([0.22, 1, 0.22]);
+  expect(dots(0).map((dot) => arg(dot, "id"))).toEqual(["wait-0", "wait-1", "wait-2"]);
+  expect(dots(0).every((dot) => calls(dot, "transition")[0].args[0] === "opacity")).toBe(true);
+  const bar = (step) => descendants(new ScanLine("scan").step(step).period(450).build(cx))[0];
+  expect(arg(bar(0), "left")).toBe("0%");
+  expect(arg(bar(1), "left")).toBe("72%");
+  expect(calls(bar(1), "transition")[0].args).toEqual(["left", { duration: 450, easing: "ease-in-out" }]);
+  expect(() => new Pulse("")).toThrow(/id/);
 });

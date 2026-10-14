@@ -355,3 +355,56 @@ export class ToneTile {
       .child(div().text_size(t.type.body).text_color(t.colors.bright).child(value));
   }
 }
+
+/**
+ * Three dots that brighten in turn: work in progress whose length is unknown.
+ *
+ * The application advances `step` on a timer (a few times a second is enough)
+ * and calls `cx.notify()`; each dot's opacity then eases to its new target in
+ * native code, so the motion stays smooth without a redraw per frame.
+ */
+export class Pulse {
+  #id;
+  #step = 0;
+  /** @type {Tone} */
+  #tone = "accent";
+  /** @param {string} id stable, so the dots keep their motion across renders */
+  constructor(id) { this.#id = requiredText("Pulse", "id", id); }
+  /** @param {number} value advances by one per tick */
+  step(value) { this.#step = Math.max(0, Math.floor(Number(value) || 0)); return this; }
+  /** @param {Tone} value */
+  tone(value) { this.#tone = toneOf("Pulse", value); return this; }
+  /** @param {import("gpui-kit").Context} _cx */
+  build(_cx) {
+    const t = theme(), color = this.#tone === "neutral" ? t.colors.foreground : t.tone(this.#tone).solid;
+    return h_flex().flex_shrink_0().gap(4).items_center()
+      .children([0, 1, 2].map((index) => div().id(`${this.#id}-${index}`).size(5).rounded(t.radius.pill).bg(color)
+        .opacity(this.#step % 3 === index ? 1 : 0.22)
+        .transition("opacity", { duration: 320, easing: "ease-in-out" })));
+  }
+}
+
+/**
+ * A thin track with a short bar sweeping back and forth across it, for the
+ * edge of a surface that is busy. Like `Pulse`, it moves when the
+ * application advances `step`; each step sends the bar to the other end.
+ */
+export class ScanLine {
+  #id;
+  #step = 0;
+  #period = 900;
+  /** @param {string} id stable, so the bar keeps its motion across renders */
+  constructor(id) { this.#id = requiredText("ScanLine", "id", id); }
+  /** @param {number} value */
+  step(value) { this.#step = Math.max(0, Math.floor(Number(value) || 0)); return this; }
+  /** How long one sweep takes, in milliseconds; match the step interval. @param {number} ms */
+  period(ms) { this.#period = Math.max(100, Number(ms) || 900); return this; }
+  /** @param {import("gpui-kit").Context} _cx */
+  build(_cx) {
+    const t = theme();
+    return div().relative().w_full().h(2).overflow_hidden()
+      .child(div().id(this.#id).absolute().top(0).h_full().w("28%").rounded(t.radius.pill).bg(t.colors.accent)
+        .left(this.#step % 2 === 0 ? "0%" : "72%")
+        .transition("left", { duration: this.#period, easing: "ease-in-out" }));
+  }
+}

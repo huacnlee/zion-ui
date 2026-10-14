@@ -190,3 +190,37 @@ export declare class ToneTile {
     /** @param {import("gpui-kit").Context} _cx */
     build(_cx: import("gpui-kit").Context): import("gpui-kit").Element;
 }
+/**
+ * Three dots that brighten in turn: work in progress whose length is unknown.
+ *
+ * The application advances `step` on a timer (a few times a second is enough)
+ * and calls `cx.notify()`; each dot's opacity then eases to its new target in
+ * native code, so the motion stays smooth without a redraw per frame.
+ */
+export declare class Pulse {
+    #private;
+    /** @param {string} id stable, so the dots keep their motion across renders */
+    constructor(id: string);
+    /** @param {number} value advances by one per tick */
+    step(value: number): this;
+    /** @param {Tone} value */
+    tone(value: Tone): this;
+    /** @param {import("gpui-kit").Context} _cx */
+    build(_cx: import("gpui-kit").Context): import("gpui-kit").Element;
+}
+/**
+ * A thin track with a short bar sweeping back and forth across it, for the
+ * edge of a surface that is busy. Like `Pulse`, it moves when the
+ * application advances `step`; each step sends the bar to the other end.
+ */
+export declare class ScanLine {
+    #private;
+    /** @param {string} id stable, so the bar keeps its motion across renders */
+    constructor(id: string);
+    /** @param {number} value */
+    step(value: number): this;
+    /** How long one sweep takes, in milliseconds; match the step interval. @param {number} ms */
+    period(ms: number): this;
+    /** @param {import("gpui-kit").Context} _cx */
+    build(_cx: import("gpui-kit").Context): import("gpui-kit").Element;
+}

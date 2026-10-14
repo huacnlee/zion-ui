@@ -86,7 +86,7 @@ Every tone — `accent`, `success`, `warning`, `danger`, `info`, `neutral` — d
 
 **Controls** — `Button` (`primary` light, `secondary` dark, `outline`, `ghost`, `danger`, `accent`; three sizes; uppercase footer form), `IconButton` (with selected toggle state), `Segmented`, `Chip` (selectable, removable), `Kbd`, `SearchField` (icon, application `InputState`, key hint), `ToggleRow`, `MenuList` (icons, meta, checks, separators, keyboard cursor), `SelectTrigger`.
 
-**Data** — `Stat` (monospace headline with a toned note), `Badge`, `Callout`, `Meter`, `TickBar`, `SegmentBar`, `Legend`, `PropertyList`, `StatStrip`, `Steps`, `MetricTile`, `ToneTile`, `EmptyState`.
+**Data** — `Stat` (monospace headline with a toned note), `Badge`, `Callout`, `Meter`, `TickBar`, `SegmentBar`, `Legend`, `PropertyList`, `StatStrip`, `Steps`, `MetricTile`, `ToneTile`, `EmptyState`, and `Pulse` and `ScanLine` for work in progress (they move through native transitions when the application advances their `step`).
 
 **Text** — `Heading`, `Text`, `Muted`, `Mono`, `SectionLabel`.
 
