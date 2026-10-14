@@ -84,6 +84,7 @@ export class Sidebar {
   #id;
   #brand;
   #brandMark;
+  #brandAction;
   #search;
   /** @type {any[]} */
   #children = [];
@@ -95,6 +96,8 @@ export class Sidebar {
   brand(name) { this.#brand = name; return this; }
   /** @param {string} asset an SVG drawn dark on the light brand tile */
   brandMark(asset) { this.#brandMark = asset; return this; }
+  /** A control at the end of the brand row, such as the sidebar toggle. @param {any} element */
+  brandAction(element) { this.#brandAction = element; return this; }
   /** @param {any} element a built `SearchField` */
   search(element) { this.#search = element; return this; }
   /** @param {any[]} elements built `NavItem`s, `NavSection`s or anything else */
@@ -109,11 +112,13 @@ export class Sidebar {
     const children = requiredRenderables("Sidebar", "children", this.#children);
     const footer = optionalRenderable("Sidebar", "footer", this.#footer);
     const search = optionalRenderable("Sidebar", "search", this.#search);
+    const brandAction = optionalRenderable("Sidebar", "brandAction", this.#brandAction);
     return v_flex().id(this.#id).size_full().min_h_0().px(10).pt(12).pb(10).gap(10)
       .when(Boolean(brand), (el) => el.child(h_flex().h(30).px(4).gap(8).items_center()
         .child(h_flex().size(22).flex_shrink_0().rounded(6).bg(c.light).text_color(c.onLight).items_center().justify_center()
           .when(Boolean(this.#brandMark), (el) => el.child(svg(this.#brandMark).size(13))))
-        .child(div().flex_1().min_w_0().truncate().text_size(t.type.label).font_medium().text_color(c.bright).child(brand))))
+        .child(div().flex_1().min_w_0().truncate().text_size(t.type.label).font_medium().text_color(c.bright).child(brand))
+        .when(Boolean(brandAction), (el) => el.child(brandAction))))
       .when(Boolean(search), (el) => el.child(search))
       .child(v_flex().id(`${this.#id}-items`).flex_1().min_h_0().overflow_y_scrollbar().gap(1).children(children))
       .when(Boolean(footer), (el) => el.child(footer));
@@ -231,11 +236,12 @@ export class PageHeader {
     const leading = optionalRenderable("PageHeader", "leading", this.#leading);
     const size = this.#compact ? t.type.heading : t.type.display;
     return h_flex().w_full().flex_shrink_0().px(this.#compact ? 16 : 24).pt(this.#compact ? 12 : 18).pb(this.#compact ? 10 : 14).gap(12).items_end()
-      .when(Boolean(leading), (el) => el.child(div().flex_shrink_0().child(leading)))
       .child(v_flex().flex_1().min_w_0().gap(4)
         .when(this.#breadcrumb.length > 0, (el) => el.child(h_flex().gap(6).items_center().text_size(t.type.small).text_color(c.secondary)
           .children(this.#breadcrumb.flatMap((part, index) => index ? [div().text_color(c.tertiary).child("/"), div().child(part)] : [div().child(part)]))))
         .child(h_flex().min_w_0().gap(10).items_center()
+          // A leading control lines up with the title, not with the breadcrumb.
+          .when(Boolean(leading), (el) => el.child(div().flex_shrink_0().child(leading)))
           // The title keeps a readable minimum; the meta text gives way first.
           .child(div().min_w(96).flex_shrink(1).truncate().text_size(size).font_medium().text_color(c.bright).child(this.#title))
           .when(Boolean(badge), (el) => el.child(badge))

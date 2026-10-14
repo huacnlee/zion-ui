@@ -128,13 +128,14 @@ test("cards nest a lighter body inside the shell with concentric radii", () => {
 });
 
 test("the frame insets a rounded main panel beside the navigation", () => {
-  const frame = new AppFrame("app").sidebar(new Sidebar("nav").brand("Studio").children([
+  const frame = new AppFrame("app").sidebar(new Sidebar("nav").brand("Studio").brandAction(el("toggle")).children([
     new NavSection("Recent").build(cx),
     new NavItem("home").label("Home").count(3).selected().build(cx),
   ]).build(cx)).main(el("main")).build(cx);
   const panel = descendants(frame).find((item) => arg(item, "rounded") === theme().radius.main);
   expect(arg(panel, "bg")).toBe(theme().colors.main);
   expect(texts(frame)).toEqual(expect.arrayContaining(["Studio", "Recent", "Home", "3"]));
+  expect(named(frame, "toggle")).toHaveLength(1);
 });
 
 test("the sidebar slides shut by width and resizes within its bounds", () => {

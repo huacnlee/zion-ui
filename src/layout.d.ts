@@ -41,6 +41,8 @@ export declare class Sidebar {
     brand(name: string): this;
     /** @param {string} asset an SVG drawn dark on the light brand tile */
     brandMark(asset: string): this;
+    /** A control at the end of the brand row, such as the sidebar toggle. @param {any} element */
+    brandAction(element: any): this;
     /** @param {any} element a built `SearchField` */
     search(element: any): this;
     /** @param {any[]} elements built `NavItem`s, `NavSection`s or anything else */

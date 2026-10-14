@@ -35,7 +35,7 @@ export default class Gallery extends View {
   }
 
   render(cx) {
-    const sidebar = new Sidebar("nav").brand("Zion UI").brandMark(icon("mark"))
+    const sidebar = new Sidebar("nav").brand("Zion UI").brandMark(icon("mark")).brandAction(this.toggle(cx))
       .search(new SearchField("nav-search", this.search).icon(icon("search")).hint("Ctrl K").build(cx))
       .children([
         ...PAGES.map((page) => {
@@ -53,9 +53,7 @@ export default class Gallery extends View {
       .build(cx);
 
     const main = v_flex().size_full().min_h_0()
-      .child(new PageHeader("Overview").breadcrumb(["Gallery", "Home energy"])
-        .leading(new IconButton("toggle-sidebar").icon(icon("panel-left")).description("Toggle sidebar").selected(this.sidebarOpen)
-          .onClick((_event, cx) => { this.sidebarOpen = !this.sidebarOpen; cx.notify(); }).build(cx)).badge(new Badge("Online").tone("accent").dot().build(cx))
+      .child(this.header(cx).badge(new Badge("Online").tone("accent").dot().build(cx))
         .actions([
           new Button("export").label("Export").icon(icon("share")).variant("outline").build(cx),
           new IconButton("layout").icon(icon("list")).description("Change layout").variant("secondary").build(cx),
@@ -73,6 +71,20 @@ export default class Gallery extends View {
     return new AppFrame("gallery").sidebar(sidebar).main(main).collapsed(!this.sidebarOpen).sidebarWidth(this.sidebarWidth)
       .resizable({ min: 180, max: 360, onResize: (width, cx) => { this.sidebarWidth = width; cx.notify(); } })
       .build(cx);
+  }
+
+  // The sidebar toggle lives in the sidebar while it is open and moves to the
+  // start of the page title once it is shut.
+  toggle(cx) {
+    return new IconButton("toggle-sidebar").icon(icon("panel-left")).size("sm")
+      .description(this.sidebarOpen ? "Hide sidebar" : "Show sidebar")
+      .onClick((_event, cx) => { this.sidebarOpen = !this.sidebarOpen; cx.notify(); }).build(cx);
+  }
+
+  header(cx) {
+    const header = new PageHeader("Overview").breadcrumb(["Gallery", "Home energy"]);
+    if (!this.sidebarOpen) header.leading(this.toggle(cx));
+    return header;
   }
 
   output(cx) {
