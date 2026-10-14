@@ -315,7 +315,9 @@ export class SearchField {
     return h_flex().id(this.#id).h(30).px(10).gap(8).items_center().rounded(t.radius.control)
       .bg(this.#surface === "well" ? c.well : c.card).border(1).border_color(c.border)
       .when(Boolean(this.#icon), (el) => el.child(div().text_color(c.secondary).child(svg(this.#icon).size(13))))
-      .child(Input.new(this.#state).flex_1().min_w_0().text_size(t.type.body))
+      // Inputs draw their own text and do not inherit the family from their
+      // container, so the sans family is set on the input itself.
+      .child(Input.new(this.#state).flex_1().min_w_0().text_size(t.type.body).when(Boolean(t.fonts.sans), (el) => el.font_family(t.fonts.sans)))
       .when(Boolean(hint), (el) => el.child(new Kbd(hint).build(cx)));
   }
 }
