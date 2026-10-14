@@ -1,0 +1,9 @@
+{
+  "id": "com.huacnlee.zion-ui-gallery",
+  "name": "Zion UI Gallery",
+  "entry": "main.js",
+  "window": {
+    "width": 1360,
+    "height": 900
+  }
+}
