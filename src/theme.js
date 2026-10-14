@@ -153,10 +153,18 @@ export function theme() {
  *   `theme` names one of `THEMES` (default `zion`); `palette` overrides
  *   its roles and `accent` is shorthand for `palette.accent`; `mono` names the
  *   monospace family, which an application usually resolves from the system.
+ *   `sans` names the family for words. For Chinese, Japanese or Korean text,
+ *   name a CJK family that also draws Latin (Noto Sans CJK SC, PingFang SC):
+ *   GPUI lowers a line's baseline to fit a fallback font's taller ascent but
+ *   keeps the primary font's line box, so mixed text sits low when its CJK
+ *   glyphs come from a fallback. A name given once is kept by later calls
+ *   that name only the other family.
  */
 export function applyTheme(options = {}) {
   const palette = { ...options.palette, ...(options.accent ? { accent: options.accent } : {}) };
-  active = derive(options.theme ?? "zion", palette, { mono: options.mono, sans: options.sans });
+  // Fonts are often resolved one at a time; a call that names one keeps the other.
+  const fonts = { mono: options.mono ?? active?.fonts.mono, sans: options.sans ?? active?.fonts.sans };
+  active = derive(options.theme ?? "zion", palette, fonts);
   const c = active.colors;
   set_theme({
     appearance: "dark",

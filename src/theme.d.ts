@@ -129,6 +129,12 @@ export declare function theme(): {
  *   `theme` names one of `THEMES` (default `zion`); `palette` overrides
  *   its roles and `accent` is shorthand for `palette.accent`; `mono` names the
  *   monospace family, which an application usually resolves from the system.
+ *   `sans` names the family for words. For Chinese, Japanese or Korean text,
+ *   name a CJK family that also draws Latin (Noto Sans CJK SC, PingFang SC):
+ *   GPUI lowers a line's baseline to fit a fallback font's taller ascent but
+ *   keeps the primary font's line box, so mixed text sits low when its CJK
+ *   glyphs come from a fallback. A name given once is kept by later calls
+ *   that name only the other family.
  */
 export declare function applyTheme(options?: {
     theme?: string;

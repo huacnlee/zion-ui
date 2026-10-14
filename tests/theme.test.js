@@ -3,7 +3,7 @@ import { beforeEach, expect, test } from "bun:test";
 import { calls, reset } from "./gpui-stub.js";
 import { DEFAULT_PALETTE, THEMES, TONES, alpha, applyTheme, mix, theme } from "zion-ui";
 
-beforeEach(() => { reset(); applyTheme(); });
+beforeEach(() => { reset(); applyTheme({ sans: undefined, mono: "JetBrains Mono" }); });
 
 test("the default accent is green and every tone derives a tint and an edge", () => {
   expect(theme().colors.accent).toBe(DEFAULT_PALETTE.accent);
@@ -47,4 +47,10 @@ test("themes are named; zion is the default and unknown names are refused", () =
   expect(theme().name).toBe("zion");
   expect(applyTheme({ theme: "zion" }).colors.accent).toBe(THEMES.zion.accent);
   expect(() => applyTheme({ theme: "plain" })).toThrow(/zion/);
+});
+
+test("a call that names one font keeps the other", () => {
+  applyTheme({ sans: "Noto Sans CJK SC", mono: "Iosevka" });
+  applyTheme({ mono: "JetBrains Mono" });
+  expect(theme().fonts).toEqual({ sans: "Noto Sans CJK SC", mono: "JetBrains Mono" });
 });
