@@ -43,35 +43,35 @@ export function alpha(color, opacity) {
 }
 
 /**
- * Zion, the default theme: neutral graphite surfaces and one phosphor-green
- * accent, the green of a terminal in the dark.
- *
- * Surfaces step by lightness, not by hue, so a screen keeps one temperature and
- * the accent is the only colored thing on it. `canvas` is what navigation sits on,
+ * Zion, the default theme: a phosphor screen. Surfaces are near-black with
+ * the faintest green cast, stepped by lightness rather than hue, and every
+ * signal color is a phosphor of the same, deliberately muted, brightness — green for the accent
+ * and success, amber for warnings, red for danger, cyan for information — so
+ * the colors on a screen read as one family. `canvas` is what navigation sits on,
  * `main` the deeper panel the work happens in, `card` and `raised` the steps
  * above it, and `well` the recess below it that fields and tracks sit in.
  */
 /** @type {Readonly<Record<PaletteRole, string>>} */
 export const DEFAULT_PALETTE = Object.freeze({
-  canvas: "#111111",
-  main: "#0b0b0b",
-  card: "#171717",
-  raised: "#212121",
-  well: "#0d0d0d",
-  border: "#262626",
-  borderStrong: "#363636",
-  dashed: "#555555",
-  foreground: "#ececec",
-  bright: "#ffffff",
-  secondary: "#8c8c8c",
-  tertiary: "#5d5d5d",
-  light: "#f2f2f2",
-  onLight: "#111111",
-  accent: "#00ff41",
-  success: "#2dd4bf",
-  warning: "#f0a35a",
-  danger: "#f2706d",
-  info: "#72a7f5",
+  canvas: "#0c0f0d",
+  main: "#070908",
+  card: "#121614",
+  raised: "#1b201d",
+  well: "#090b0a",
+  border: "#1f2622",
+  borderStrong: "#2d3631",
+  dashed: "#4b5751",
+  foreground: "#d8e4dc",
+  bright: "#f1fbf4",
+  secondary: "#7f8c85",
+  tertiary: "#53605a",
+  light: "#e4efe8",
+  onLight: "#06120a",
+  accent: "#2fc864",
+  success: "#2fc864",
+  warning: "#dba13a",
+  danger: "#e0574f",
+  info: "#2db7c9",
 });
 
 /**
@@ -111,8 +111,8 @@ function derive(name, palette, fonts) {
     const base = tone === "neutral" ? colors.secondary : colors[tone];
     return {
       fg: tone === "neutral" ? colors.foreground : base,
-      bg: mix(colors.canvas, base, tone === "neutral" ? 0.08 : 0.13),
-      border: mix(colors.canvas, base, tone === "neutral" ? 0.18 : 0.32),
+      bg: mix(colors.canvas, base, tone === "neutral" ? 0.08 : 0.1),
+      border: mix(colors.canvas, base, tone === "neutral" ? 0.18 : 0.26),
       solid: base,
     };
   };

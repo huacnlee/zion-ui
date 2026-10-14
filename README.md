@@ -1,6 +1,6 @@
 # Zion UI
 
-Dark, quiet presentation components for [gpui-shell](https://github.com/longbridge/gpui-kit) applications: graphite surfaces stepped by lightness, one accent color, sans-serif for words and monospace for data, and cards that nest an inset body inside a darker shell.
+Dark, quiet presentation components for [gpui-shell](https://github.com/longbridge/gpui-kit) applications: near-black surfaces stepped by lightness, one muted phosphor accent, sans-serif for words and monospace for data, and cards that nest an inset body inside a darker shell.
 
 The library owns presentation. The application owns copy, stable ids, callbacks, state and asset paths, and passes them in.
 
@@ -54,12 +54,12 @@ Icons are SVG paths relative to the application root, which is where gpui-shell 
 
 ## Theme
 
-Themes are named. The default, **zion**, is neutral graphite with one phosphor-green accent; `THEMES` lists what is available.
+Themes are named. The default, **zion**, is a phosphor screen: near-black surfaces with a faint green cast, a green accent, and amber, red and cyan phosphors for warnings, danger and information; `THEMES` lists what is available.
 
 `applyTheme(options)` installs the palette as gpui-shell's semantic tokens, so base and component widgets — inputs, Markdown, scrollbars — follow it, and makes it the palette every Zion component reads while it builds.
 
 ```js
-applyTheme();                              // zion: graphite with a phosphor-green accent
+applyTheme();                              // zion: a phosphor screen with a green accent
 applyTheme({ theme: "zion" });         // the same, by name
 applyTheme({ accent: "#e2b24f" });         // another accent; tints and edges follow
 applyTheme({ mono: "JetBrains Mono" });    // the monospace family for data
