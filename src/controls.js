@@ -269,8 +269,21 @@ export class Kbd {
   /** @param {import("gpui-kit").Context} _cx */
   build(_cx) {
     const t = theme(), c = t.colors;
-    return div().flex_shrink_0().px(5).py(1).rounded(4).bg(c.raised).border(1).border_color(c.borderStrong)
+    return h_flex().flex_shrink_0().h(18).px(5).items_center().rounded(4).bg(c.raised)
       .text_size(t.type.caption).text_color(c.secondary).font_family(t.fonts.mono).child(this.#keys);
+  }
+}
+
+/** A count or fact beside a title, such as `12 circuits`: a dark monospace tag. */
+export class Tag {
+  #text;
+  /** @param {string} text */
+  constructor(text) { this.#text = requiredText("Tag", "text", text); }
+  /** @param {import("gpui-kit").Context} _cx */
+  build(_cx) {
+    const t = theme(), c = t.colors;
+    return h_flex().flex_shrink_0().h(24).px(8).items_center().rounded(t.radius.chip).bg(c.well).border(1).border_color(c.border)
+      .text_size(t.type.small).text_color(c.secondary).font_family(t.fonts.mono).child(this.#text);
   }
 }
 
@@ -424,7 +437,7 @@ export class SelectTrigger {
     const value = requiredText("SelectTrigger", "value", this.#value);
     const label = optionalText("SelectTrigger", "label", this.#label);
     const t = theme(), c = t.colors, onClick = this.#onClick;
-    return BaseButton.new(this.#id).h(30).px(10).flex_shrink_0().rounded(t.radius.control)
+    return BaseButton.new(this.#id).h(30).min_w(160).px(10).flex_shrink_0().rounded(t.radius.control)
       .bg(this.#open ? c.raised : c.well).border(1).border_color(this.#open ? c.dashed : c.borderStrong)
       .accessibility_label(label ? `${label}: ${value}` : value)
       .when(this.#full, (el) => el.w_full())
@@ -433,7 +446,7 @@ export class SelectTrigger {
       .when(Boolean(onClick), (el) => el.on_click((event, cx) => onClick(event, cx)))
       .child(h_flex().size_full().gap(8).items_center()
         .when(Boolean(label), (el) => el.child(div().flex_1().text_size(t.type.body).text_color(c.secondary).child(label)))
-        .child(div().text_size(t.type.body).text_color(c.bright).when(this.#mono, (el) => el.font_family(t.fonts.mono)).child(value))
+        .child(div().when(!label, (el) => el.flex_1()).min_w_0().truncate().text_size(t.type.body).text_color(c.bright).when(this.#mono, (el) => el.font_family(t.fonts.mono)).child(value))
         .child(div().text_size(t.type.small).text_color(c.secondary).child(this.#open ? "⌃" : "⌄")));
   }
 }

@@ -54,7 +54,7 @@ Icons are SVG paths relative to the application root, which is where gpui-shell 
 
 ## Theme
 
-Themes are named. The default, **zion**, is a phosphor screen: near-black surfaces with a faint green cast, a green accent, and amber, red and cyan phosphors for warnings, danger and information; `THEMES` lists what is available.
+Themes are named. The default, **zion**, is a phosphor screen: near-black surfaces with a faint green cast, a green accent, and amber, red and blue for warnings, danger and information, all at one OKLCH lightness and chroma so none is louder than another; `THEMES` lists what is available.
 
 `applyTheme(options)` installs the palette as gpui-shell's semantic tokens, so base and component widgets — inputs, Markdown, scrollbars — follow it, and makes it the palette every Zion component reads while it builds.
 

@@ -21,8 +21,10 @@ export declare function alpha(color: string, opacity: number): Color;
  * Zion, the default theme: a phosphor screen. Surfaces are near-black with
  * the faintest green cast, stepped by lightness rather than hue, and every
  * signal color is a phosphor of the same, deliberately muted, brightness — green for the accent
- * and success, amber for warnings, red for danger, cyan for information — so
- * the colors on a screen read as one family. `canvas` is what navigation sits on,
+ * and success, amber for warnings, red for danger, blue for information — so
+ * the colors on a screen read as one family. All four sit at OKLCH lightness
+ * 0.72 and chroma 0.15 (amber 0.135, the most sRGB holds there) and differ
+ * only in hue, so none is louder than another. `canvas` is what navigation sits on,
  * `main` the deeper panel the work happens in, `card` and `raised` the steps
  * above it, and `well` the recess below it that fields and tracks sit in.
  */

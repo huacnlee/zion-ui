@@ -118,6 +118,14 @@ export declare class Kbd {
     /** @param {import("gpui-kit").Context} _cx */
     build(_cx: import("gpui-kit").Context): import("gpui-kit").Element;
 }
+/** A count or fact beside a title, such as `12 circuits`: a dark monospace tag. */
+export declare class Tag {
+    #private;
+    /** @param {string} text */
+    constructor(text: string);
+    /** @param {import("gpui-kit").Context} _cx */
+    build(_cx: import("gpui-kit").Context): import("gpui-kit").Element;
+}
 /** A search or command field: icon, the application's input state, a key hint. */
 export declare class SearchField {
     #private;

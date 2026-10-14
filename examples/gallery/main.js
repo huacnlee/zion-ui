@@ -2,7 +2,7 @@
 import { View, div } from "gpui-kit";
 import { h_flex, v_flex, InputState, Popup } from "gpui-base";
 import {
-  AppFrame, Badge, Button, Callout, Card, Chip, Divider, EmptyState, IconBadge, IconButton, Kbd, Legend, MenuList,
+  AppFrame, Badge, Button, Tag, Callout, Card, Chip, Divider, EmptyState, IconBadge, IconButton, Kbd, Legend, MenuList,
   MetricTile, NavItem, NavSection, PageHeader, PropertyList, SearchField, SectionLabel, SegmentBar, Segmented,
   SelectTrigger, Sidebar, Stat, StatStrip, Steps, TickBar, ToggleRow, ToneTile, applyTheme, theme,
 } from "../../src/index.js";
@@ -106,10 +106,10 @@ export default class Gallery extends View {
         .child(new ToggleRow("notify").title("Notify on export").checked(this.notify)
           .onChange((value, cx) => { this.notify = value; cx.notify(); }).build(cx))
         .child(new SectionLabel("Battery mode").build(cx))
-        .child(Popup.new("mode-popup", new SelectTrigger("mode").value(current.label).fullWidth().open(this.selectOpen)
+        .child(Popup.new("mode-popup", new SelectTrigger("mode").value(current.label).open(this.selectOpen)
             .onClick((_event, cx) => { this.selectOpen = !this.selectOpen; cx.notify(); }).build(cx))
           .anchor("top_left")
-          .when(this.selectOpen, (el) => el.content(new MenuList("mode-list").width(340).items(modes.map((item) => ({
+          .when(this.selectOpen, (el) => el.content(new MenuList("mode-list").width(240).items(modes.map((item) => ({
             ...item, checked: item.id === this.mode,
             onSelect: (cx) => { this.mode = item.id; this.selectOpen = false; cx.notify(); },
           }))).build(cx))))
@@ -122,7 +122,7 @@ export default class Gallery extends View {
 
   circuits(cx) {
     return new Card("circuits").title("Circuit health").subtitle("average draw · last 7 days").icon(icon("bolt"))
-      .trailing(new Kbd("12 circuits").build(cx))
+      .trailing(new Tag("12 circuits").build(cx))
       .body(v_flex().gap(16)
         .child(h_flex().gap(12)
           .child(new MetricTile("HVAC").value("3.4 kW").caption("Heating and cooling").badge(new Badge("HIGH").tone("danger").mono().build(cx)).meter(0.85).tone("danger").footnote("Top 10% of similar homes").build(cx))
@@ -160,7 +160,7 @@ export default class Gallery extends View {
 
   schedules(cx) {
     return new Card("schedules").title("Schedules").subtitle("devices · automations").icon(icon("calendar"))
-      .trailing(new Kbd("0 schedules").build(cx))
+      .trailing(new Tag("0 schedules").build(cx))
       .body(new EmptyState("No schedules yet").art(new IconBadge(icon("calendar")).size(56).build(cx))
         .description("Your meter and inverter are connected. Add a schedule to move heavy loads into the sunny hours.")
         .children([

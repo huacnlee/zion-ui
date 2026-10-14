@@ -6,7 +6,7 @@ const EXPORTS = [
   "AppFrame", "Badge", "Button", "Callout", "Card", "Chip", "DEFAULT_PALETTE", "Divider", "EmptyState", "Heading",
   "IconBadge", "IconButton", "Kbd", "Legend", "MenuList", "Meter", "MetricTile", "Mono", "Muted", "NavItem",
   "NavSection", "PageHeader", "PropertyList", "RADIUS", "SearchField", "SectionLabel", "SegmentBar", "Segmented",
-  "SelectTrigger", "Sidebar", "Stat", "StatStrip", "Steps", "THEMES", "TONES", "TYPE", "Text", "TickBar", "ToggleRow",
+  "SelectTrigger", "Sidebar", "Stat", "StatStrip", "Steps", "THEMES", "TONES", "TYPE", "Tag", "Text", "TickBar", "ToggleRow",
   "ToneTile", "alpha", "applyTheme", "inkColor", "mix", "theme", "variantChrome",
 ];
 

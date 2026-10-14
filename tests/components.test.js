@@ -3,7 +3,7 @@ import { beforeEach, expect, test } from "bun:test";
 import { resolvedStyle } from "./gpui-stub.js";
 import { arg, calls, cx, descendants, named, texts } from "./helpers.js";
 import {
-  AppFrame, Badge, Button, Callout, Card, Chip, Divider, EmptyState, IconBadge, IconButton, Kbd, Legend,
+  AppFrame, Badge, Button, Tag, Callout, Card, Chip, Divider, EmptyState, IconBadge, IconButton, Kbd, Legend,
   MenuList, Meter, MetricTile, Mono, NavItem, NavSection, PageHeader, PropertyList, SearchField, SectionLabel,
   SegmentBar, Segmented, SelectTrigger, Sidebar, Stat, StatStrip, Steps, TickBar, ToggleRow, ToneTile, applyTheme, theme,
 } from "zion-ui";
@@ -164,6 +164,7 @@ test("everything else builds with its content", () => {
     new Badge("Online").tone("success").dot().build(cx),
     new Callout("Heating used 41%").tone("warning").icon("icons/alert.svg").build(cx),
     new Kbd("Ctrl K").build(cx),
+    new Tag("12 circuits").build(cx),
     new SearchField("search", {}).icon("icons/search.svg").hint("Ctrl K").build(cx),
     new SelectTrigger("model").label("Model").value("sonnet").mono().open().build(cx),
     new PageHeader("Overview").breadcrumb(["Gallery", "Home"]).badge(new Badge("Live").build(cx)).actions([el("action")]).build(cx),
@@ -177,5 +178,6 @@ test("everything else builds with its content", () => {
   ];
   expect(built.every((item) => item && item.calls.length > 0)).toBe(true);
   expect(texts(built[2])).toEqual(["Ctrl K"]);
-  expect(texts(built[12])).toEqual(["BATTERY MODE"]);
+  expect(texts(built[13])).toEqual(["BATTERY MODE"]);
+  expect(arg(built[2], "h")).toBe(18);
 });
