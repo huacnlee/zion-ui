@@ -211,14 +211,17 @@ test("everything else builds with its content", () => {
 });
 
 test("pulse and scan line move by step, through native transitions on stable ids", () => {
-  const dots = (step) => descendants(new Pulse("wait").step(step).build(cx));
-  expect(dots(0).map((dot) => arg(dot, "opacity"))).toEqual([1, 0.22, 0.22]);
-  expect(dots(4).map((dot) => arg(dot, "opacity"))).toEqual([0.22, 1, 0.22]);
-  expect(dots(0).map((dot) => arg(dot, "id"))).toEqual(["wait-0", "wait-1", "wait-2"]);
-  expect(dots(0).every((dot) => calls(dot, "transition")[0].args[0] === "opacity")).toBe(true);
-  const bar = (step) => descendants(new ScanLine("scan").step(step).period(450).build(cx))[0];
-  expect(arg(bar(0), "left")).toBe("0%");
-  expect(arg(bar(1), "left")).toBe("72%");
+  const dots = (step) => descendants(new Pulse("wait").step(step).build(cx)).filter((node) => calls(node, "opacity").length);
+  expect(dots(0).map((dot) => arg(dot, "opacity"))).toEqual([1, 0.16, 0.16, 0.16, 0.16, 0.3, 0.16, 0.3, 0.55]);
+  expect(dots(2).map((dot) => arg(dot, "opacity")).slice(0, 3)).toEqual([0.3, 0.55, 1]);
+  expect(dots(0).map((dot) => arg(dot, "id")).slice(0, 4)).toEqual(["wait-0-0", "wait-0-1", "wait-0-2", "wait-1-0"]);
+  expect(dots(0).map((dot) => arg(dot, "w")).slice(0, 3)).toEqual([5, 3, 3]);
+  expect(calls(dots(0)[0], "transition").map((call) => call.args[0])).toEqual(["opacity", "width", "height"]);
+  // Native transitions interpolate pixels only, so both ends are pixels.
+  const bar = (step) => descendants(new ScanLine("scan").step(step).period(450).width(500).build(cx))[0];
+  expect(arg(bar(0), "w")).toBe(150);
+  expect(arg(bar(0), "left")).toBe(0);
+  expect(arg(bar(1), "left")).toBe(350);
   expect(calls(bar(1), "transition")[0].args).toEqual(["left", { duration: 450, easing: "ease-in-out" }]);
   expect(() => new Pulse("")).toThrow(/id/);
 });

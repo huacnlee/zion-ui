@@ -191,11 +191,12 @@ export declare class ToneTile {
     build(_cx: import("gpui-kit").Context): import("gpui-kit").Element;
 }
 /**
- * Three dots that brighten in turn: work in progress whose length is unknown.
+ * Nine square dots in a 3 × 3 grid with a wave of light running across them
+ * diagonally: work in progress whose length is unknown.
  *
- * The application advances `step` on a timer (a few times a second is enough)
- * and calls `cx.notify()`; each dot's opacity then eases to its new target in
- * native code, so the motion stays smooth without a redraw per frame.
+ * The application advances `step` on a timer and calls `cx.notify()`; every
+ * dot then eases to its new brightness in native code over `period`, so the
+ * wave flows without a redraw per frame. Match `period` to the timer.
  */
 export declare class Pulse {
     #private;
@@ -203,15 +204,19 @@ export declare class Pulse {
     constructor(id: string);
     /** @param {number} value advances by one per tick */
     step(value: number): this;
+    /** Milliseconds between steps. @param {number} ms */
+    period(ms: number): this;
     /** @param {Tone} value */
     tone(value: Tone): this;
     /** @param {import("gpui-kit").Context} _cx */
     build(_cx: import("gpui-kit").Context): import("gpui-kit").Element;
 }
 /**
- * A thin track with a short bar sweeping back and forth across it, for the
- * edge of a surface that is busy. Like `Pulse`, it moves when the
- * application advances `step`; each step sends the bar to the other end.
+ * A thin track with a short bar gliding back and forth across it, like an
+ * indeterminate progress bar, for the edge of a surface that is busy. It moves
+ * when the application advances `step`: each step sends the bar to the other
+ * end, and the runtime eases it there natively. Native transitions only
+ * interpolate pixels, so the track's width is given in pixels.
  */
 export declare class ScanLine {
     #private;
@@ -221,6 +226,8 @@ export declare class ScanLine {
     step(value: number): this;
     /** How long one sweep takes, in milliseconds; match the step interval. @param {number} ms */
     period(ms: number): this;
+    /** The track's width in pixels. @param {number} px */
+    width(px: number): this;
     /** @param {import("gpui-kit").Context} _cx */
     build(_cx: import("gpui-kit").Context): import("gpui-kit").Element;
 }

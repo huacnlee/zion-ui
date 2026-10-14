@@ -357,54 +357,73 @@ export class ToneTile {
 }
 
 /**
- * Three dots that brighten in turn: work in progress whose length is unknown.
+ * Nine square dots in a 3 × 3 grid with a wave of light running across them
+ * diagonally: work in progress whose length is unknown.
  *
- * The application advances `step` on a timer (a few times a second is enough)
- * and calls `cx.notify()`; each dot's opacity then eases to its new target in
- * native code, so the motion stays smooth without a redraw per frame.
+ * The application advances `step` on a timer and calls `cx.notify()`; every
+ * dot then eases to its new brightness in native code over `period`, so the
+ * wave flows without a redraw per frame. Match `period` to the timer.
  */
 export class Pulse {
   #id;
   #step = 0;
+  #period = 450;
   /** @type {Tone} */
   #tone = "accent";
   /** @param {string} id stable, so the dots keep their motion across renders */
   constructor(id) { this.#id = requiredText("Pulse", "id", id); }
   /** @param {number} value advances by one per tick */
   step(value) { this.#step = Math.max(0, Math.floor(Number(value) || 0)); return this; }
+  /** Milliseconds between steps. @param {number} ms */
+  period(ms) { this.#period = Math.max(60, Number(ms) || 450); return this; }
   /** @param {Tone} value */
   tone(value) { this.#tone = toneOf("Pulse", value); return this; }
   /** @param {import("gpui-kit").Context} _cx */
   build(_cx) {
     const t = theme(), color = this.#tone === "neutral" ? t.colors.foreground : t.tone(this.#tone).solid;
-    return h_flex().flex_shrink_0().gap(4).items_center()
-      .children([0, 1, 2].map((index) => div().id(`${this.#id}-${index}`).size(5).rounded(t.radius.pill).bg(color)
-        .opacity(this.#step % 3 === index ? 1 : 0.22)
-        .transition("opacity", { duration: 320, easing: "ease-in-out" })));
+    // Five diagonals; the lit one is full and largest, the two behind it
+    // fade and shrink, so the wave both glows and swells as it passes.
+    const LEVELS = [1, 0.55, 0.3, 0.16, 0.16];
+    const SIZES = [5, 4, 3, 3, 3];
+    const motion = { duration: this.#period, easing: "linear" };
+    const dot = (row, column) => {
+      const behind = (((this.#step - row - column) % 5) + 5) % 5;
+      return h_flex().size(5).items_center().justify_center()
+        .child(div().id(`${this.#id}-${row}-${column}`).w(SIZES[behind]).h(SIZES[behind]).rounded(1).bg(color)
+          .opacity(LEVELS[behind])
+          .transition("opacity", motion).transition("width", motion).transition("height", motion));
+    };
+    return v_flex().flex_shrink_0().gap(1)
+      .children([0, 1, 2].map((row) => h_flex().gap(1).children([0, 1, 2].map((column) => dot(row, column)))));
   }
 }
 
 /**
- * A thin track with a short bar sweeping back and forth across it, for the
- * edge of a surface that is busy. Like `Pulse`, it moves when the
- * application advances `step`; each step sends the bar to the other end.
+ * A thin track with a short bar gliding back and forth across it, like an
+ * indeterminate progress bar, for the edge of a surface that is busy. It moves
+ * when the application advances `step`: each step sends the bar to the other
+ * end, and the runtime eases it there natively. Native transitions only
+ * interpolate pixels, so the track's width is given in pixels.
  */
 export class ScanLine {
   #id;
   #step = 0;
   #period = 900;
+  #width = 0;
   /** @param {string} id stable, so the bar keeps its motion across renders */
   constructor(id) { this.#id = requiredText("ScanLine", "id", id); }
   /** @param {number} value */
   step(value) { this.#step = Math.max(0, Math.floor(Number(value) || 0)); return this; }
   /** How long one sweep takes, in milliseconds; match the step interval. @param {number} ms */
   period(ms) { this.#period = Math.max(100, Number(ms) || 900); return this; }
+  /** The track's width in pixels. @param {number} px */
+  width(px) { this.#width = Math.max(0, Number(px) || 0); return this; }
   /** @param {import("gpui-kit").Context} _cx */
   build(_cx) {
-    const t = theme();
-    return div().relative().w_full().h(2).overflow_hidden()
-      .child(div().id(this.#id).absolute().top(0).h_full().w("28%").rounded(t.radius.pill).bg(t.colors.accent)
-        .left(this.#step % 2 === 0 ? "0%" : "72%")
+    const t = theme(), track = Math.round(this.#width), bar = Math.max(24, Math.round(track * 0.3));
+    return div().relative().w(track).h(2).overflow_hidden()
+      .child(div().id(this.#id).absolute().top(0).h_full().w(bar).rounded(t.radius.pill).bg(t.colors.accent)
+        .left(this.#step % 2 === 0 ? 0 : Math.max(0, track - bar))
         .transition("left", { duration: this.#period, easing: "ease-in-out" }));
   }
 }
