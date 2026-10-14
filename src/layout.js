@@ -13,7 +13,7 @@ export class AppFrame {
   #id;
   #sidebar;
   #main;
-  #sidebarWidth = 264;
+  #sidebarWidth = 232;
 
   /** @param {string} id */
   constructor(id) { this.#id = stableId("AppFrame", id); }
@@ -32,7 +32,7 @@ export class AppFrame {
     return h_flex().id(this.#id).size_full().min_w_0().items_stretch().bg(c.canvas).text_color(c.foreground)
       .when(Boolean(t.fonts.sans), (el) => el.font_family(t.fonts.sans))
       .when(Boolean(sidebar), (el) => el.child(v_flex().w(this.#sidebarWidth).flex_shrink_0().min_h_0().child(sidebar)))
-      .child(div().flex_1().min_w_0().min_h_0().p(8).when(Boolean(sidebar), (el) => el.pl(0))
+      .child(div().flex_1().min_w_0().min_h_0().p(6).when(Boolean(sidebar), (el) => el.pl(0))
         .child(v_flex().size_full().min_h_0().rounded(t.radius.main).bg(c.main).border(1).border_color(c.border).overflow_hidden().child(main)));
   }
 }
@@ -70,13 +70,13 @@ export class Sidebar {
     const children = requiredRenderables("Sidebar", "children", this.#children);
     const footer = optionalRenderable("Sidebar", "footer", this.#footer);
     const search = optionalRenderable("Sidebar", "search", this.#search);
-    return v_flex().id(this.#id).size_full().min_h_0().px(14).pt(16).pb(12).gap(14)
-      .when(Boolean(brand), (el) => el.child(h_flex().h(36).px(4).gap(10).items_center()
-        .child(h_flex().size(28).flex_shrink_0().rounded(8).bg(c.light).text_color(c.onLight).items_center().justify_center()
-          .when(Boolean(this.#brandMark), (el) => el.child(svg(this.#brandMark).size(16))))
+    return v_flex().id(this.#id).size_full().min_h_0().px(10).pt(12).pb(10).gap(10)
+      .when(Boolean(brand), (el) => el.child(h_flex().h(30).px(4).gap(8).items_center()
+        .child(h_flex().size(22).flex_shrink_0().rounded(6).bg(c.light).text_color(c.onLight).items_center().justify_center()
+          .when(Boolean(this.#brandMark), (el) => el.child(svg(this.#brandMark).size(13))))
         .child(div().flex_1().min_w_0().truncate().text_size(t.type.label).font_medium().text_color(c.bright).child(brand))))
       .when(Boolean(search), (el) => el.child(search))
-      .child(v_flex().id(`${this.#id}-items`).flex_1().min_h_0().overflow_y_scrollbar().gap(2).children(children))
+      .child(v_flex().id(`${this.#id}-items`).flex_1().min_h_0().overflow_y_scrollbar().gap(1).children(children))
       .when(Boolean(footer), (el) => el.child(footer));
   }
 }
@@ -92,8 +92,8 @@ export class NavSection {
   /** @param {import("gpui-kit").Context} _cx */
   build(_cx) {
     const t = theme(), action = optionalRenderable("NavSection", "action", this.#action);
-    return h_flex().h(32).mt(10).px(10).items_center()
-      .child(div().flex_1().text_size(t.type.small).text_color(t.colors.tertiary).child(this.#title))
+    return h_flex().h(26).mt(8).px(8).items_center()
+      .child(div().flex_1().text_size(t.type.caption).text_color(t.colors.tertiary).child(this.#title))
       .when(Boolean(action), (el) => el.child(action));
   }
 }
@@ -140,15 +140,15 @@ export class NavItem {
     // so the row wraps its Button.
     return div().w_full().flex_shrink_0()
       .when(Boolean(onSecondary), (el) => el.on_mouse_down("right", (event, cx) => onSecondary(event, cx)))
-      .child(BaseButton.new(this.#id).w_full().h(36).rounded(t.radius.control).bg(on ? c.raised : c.clear)
+      .child(BaseButton.new(this.#id).w_full().h(30).rounded(t.radius.control).bg(on ? c.raised : c.clear)
         .accessibility_label(label)
         .when(!on, (el) => el.hover((style) => style.bg(c.hover)))
         .when(Boolean(onClick), (el) => el.on_click((event, cx) => onClick(event, cx)))
-        .child(h_flex().size_full().px(10).gap(10).items_center().text_size(t.type.body).text_color(ink)
-          .when(Boolean(this.#icon), (el) => el.child(div().text_color(on ? c.bright : c.secondary).child(svg(this.#icon).size(16))))
+        .child(h_flex().size_full().px(8).gap(8).items_center().text_size(t.type.body).text_color(ink)
+          .when(Boolean(this.#icon), (el) => el.child(div().text_color(on ? c.bright : c.secondary).child(svg(this.#icon).size(14))))
           .child(div().flex_1().min_w_0().truncate().child(label))
-          .when(Boolean(this.#indicator), (el) => el.child(div().size(6).flex_shrink_0().rounded(t.radius.pill).bg(c.accent)))
-          .when(Boolean(this.#count), (el) => el.child(div().flex_shrink_0().px(6).py(1).rounded(6).bg(c.raised)
+          .when(Boolean(this.#indicator), (el) => el.child(div().size(5).flex_shrink_0().rounded(t.radius.pill).bg(c.accent)))
+          .when(Boolean(this.#count), (el) => el.child(div().flex_shrink_0().px(5).rounded(4).bg(c.raised)
             .text_size(t.type.caption).text_color(c.secondary).font_family(t.fonts.mono).child(this.#count)))));
   }
 }
@@ -183,14 +183,14 @@ export class PageHeader {
     const badge = optionalRenderable("PageHeader", "badge", this.#badge);
     const actions = requiredRenderables("PageHeader", "actions", this.#actions);
     const meta = optionalText("PageHeader", "meta", this.#meta);
-    return h_flex().w_full().flex_shrink_0().px(28).pt(22).pb(16).gap(16).items_end()
-      .child(v_flex().flex_1().min_w_0().gap(6)
-        .when(this.#breadcrumb.length > 0, (el) => el.child(h_flex().gap(8).items_center().text_size(t.type.body).text_color(c.secondary)
+    return h_flex().w_full().flex_shrink_0().px(24).pt(18).pb(14).gap(16).items_end()
+      .child(v_flex().flex_1().min_w_0().gap(4)
+        .when(this.#breadcrumb.length > 0, (el) => el.child(h_flex().gap(6).items_center().text_size(t.type.small).text_color(c.secondary)
           .children(this.#breadcrumb.flatMap((part, index) => index ? [div().text_color(c.tertiary).child("/"), div().child(part)] : [div().child(part)]))))
-        .child(h_flex().min_w_0().gap(12).items_center()
+        .child(h_flex().min_w_0().gap(10).items_center()
           .child(div().min_w_0().truncate().text_size(t.type.display).font_medium().text_color(c.bright).child(this.#title))
           .when(Boolean(badge), (el) => el.child(badge))
-          .when(Boolean(meta), (el) => el.child(div().flex_shrink_0().text_size(t.type.label).text_color(c.secondary).child(meta)))))
+          .when(Boolean(meta), (el) => el.child(div().flex_shrink_0().text_size(t.type.body).text_color(c.secondary).child(meta)))))
       .when(actions.length > 0, (el) => el.child(h_flex().flex_shrink_0().gap(8).items_center().children(actions)));
   }
 }
@@ -198,7 +198,7 @@ export class PageHeader {
 /** A square badge with a dashed edge around an icon: a card's emblem. */
 export class IconBadge {
   #icon;
-  #size = 40;
+  #size = 28;
   /** @param {string} asset */
   constructor(asset) { this.#icon = requiredText("IconBadge", "icon", asset); }
   /** @param {number} pixels */
@@ -206,8 +206,8 @@ export class IconBadge {
   /** @param {import("gpui-kit").Context} _cx */
   build(_cx) {
     const c = theme().colors;
-    return h_flex().size(this.#size).flex_shrink_0().rounded(Math.round(this.#size / 4)).border(1).border_dashed().border_color(c.dashed)
-      .items_center().justify_center().text_color(c.bright).child(svg(this.#icon).size(Math.round(this.#size * 0.42)));
+    return h_flex().size(this.#size).flex_shrink_0().rounded(Math.round(this.#size / 4.5)).border(1).border_dashed().border_color(c.dashed)
+      .items_center().justify_center().text_color(c.bright).child(svg(this.#icon).size(Math.round(this.#size * 0.5)));
   }
 }
 
@@ -256,18 +256,18 @@ export class Card {
     const body = requiredRenderable("Card", "body", this.#body);
     const footer = optionalRenderable("Card", "footer", this.#footer);
     const header = title || this.#icon || trailing;
-    return v_flex().id(this.#id).min_w_0().rounded(t.radius.card + 4).bg(c.well).border(1).border_color(c.border).p(4)
+    return v_flex().id(this.#id).min_w_0().rounded(t.radius.card + 3).bg(c.well).border(1).border_color(c.border).p(3)
       .when(this.#fill, (el) => el.flex_1().min_h_0())
-      .when(Boolean(header), (el) => el.child(h_flex().px(16).pt(14).pb(14).gap(12).items_center()
-        .when(Boolean(this.#icon), (el) => el.child(new IconBadge(this.#icon).size(36).build(cx)))
-        .child(v_flex().flex_1().min_w_0().gap(2)
+      .when(Boolean(header), (el) => el.child(h_flex().px(13).pt(10).pb(11).gap(10).items_center()
+        .when(Boolean(this.#icon), (el) => el.child(new IconBadge(this.#icon).size(28).build(cx)))
+        .child(v_flex().flex_1().min_w_0().gap(1)
           .when(Boolean(title), (el) => el.child(div().truncate().text_size(t.type.title).text_color(c.bright).child(title)))
           .when(Boolean(subtitle), (el) => el.child(div().truncate().text_size(t.type.small).text_color(c.secondary).child(subtitle))))
         .when(Boolean(trailing), (el) => el.child(trailing))))
       .child(v_flex().min_w_0().rounded(t.radius.card).bg(c.card).border(1).border_color(c.border)
         .when(this.#fill, (el) => el.flex_1().min_h_0())
-        .when(this.#padded, (el) => el.p(20)).child(body))
-      .when(Boolean(footer), (el) => el.child(h_flex().px(16).pt(12).pb(10).gap(8).items_center().child(footer)));
+        .when(this.#padded, (el) => el.p(16)).child(body))
+      .when(Boolean(footer), (el) => el.child(h_flex().px(13).pt(9).pb(7).gap(8).items_center().child(footer)));
   }
 }
 

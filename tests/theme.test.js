@@ -5,7 +5,7 @@ import { DEFAULT_PALETTE, THEMES, TONES, alpha, applyTheme, mix, theme } from "z
 
 beforeEach(() => { reset(); applyTheme(); });
 
-test("the default accent is gold and every tone derives a tint and an edge", () => {
+test("the default accent is green and every tone derives a tint and an edge", () => {
   expect(theme().colors.accent).toBe(DEFAULT_PALETTE.accent);
   for (const tone of TONES) {
     const { fg, bg, border, solid } = theme().tone(tone);
@@ -16,9 +16,9 @@ test("the default accent is gold and every tone derives a tint and an edge", () 
 
 test("applyTheme swaps the accent and its derived roles together", () => {
   const before = theme().tone("accent");
-  applyTheme({ accent: "#00ff41" });
+  applyTheme({ accent: "#e2b24f" });
   const after = theme().tone("accent");
-  expect(after.fg).toBe("#00ff41");
+  expect(after.fg).toBe("#e2b24f");
   expect(after.bg).not.toBe(before.bg);
   expect(after.border).not.toBe(before.border);
 });

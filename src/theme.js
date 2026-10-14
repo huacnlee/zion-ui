@@ -43,11 +43,11 @@ export function alpha(color, opacity) {
 }
 
 /**
- * Zion, the default theme: neutral graphite surfaces and one warm gold
- * accent.
+ * Zion, the default theme: neutral graphite surfaces and one phosphor-green
+ * accent, the green of a terminal in the dark.
  *
  * Surfaces step by lightness, not by hue, so a screen keeps one temperature and
- * the accent is the only warm thing on it. `canvas` is what navigation sits on,
+ * the accent is the only colored thing on it. `canvas` is what navigation sits on,
  * `main` the deeper panel the work happens in, `card` and `raised` the steps
  * above it, and `well` the recess below it that fields and tracks sit in.
  */
@@ -67,8 +67,8 @@ export const DEFAULT_PALETTE = Object.freeze({
   tertiary: "#5d5d5d",
   light: "#f2f2f2",
   onLight: "#111111",
-  accent: "#e2b24f",
-  success: "#5fd18f",
+  accent: "#00ff41",
+  success: "#2dd4bf",
   warning: "#f0a35a",
   danger: "#f2706d",
   info: "#72a7f5",
@@ -81,7 +81,7 @@ export const DEFAULT_PALETTE = Object.freeze({
 export const THEMES = Object.freeze({ zion: DEFAULT_PALETTE });
 
 /** Radii nest: the main panel, cards in it, wells in those, then controls. */
-export const RADIUS = Object.freeze({ main: 18, card: 16, well: 12, control: 10, chip: 8, pill: 999 });
+export const RADIUS = Object.freeze({ main: 14, card: 12, well: 10, control: 8, chip: 6, pill: 999 });
 
 /**
  * Two families. Sans-serif carries titles, labels and prose; monospace carries
@@ -89,7 +89,7 @@ export const RADIUS = Object.freeze({ main: 18, card: 16, well: 12, control: 10,
  * mixes them on one line.
  */
 export const TYPE = Object.freeze({
-  caption: 11, small: 12, body: 13, label: 14, title: 15, heading: 20, display: 28,
+  caption: 10, small: 11, body: 12, label: 13, title: 14, heading: 16, stat: 20, display: 22,
 });
 
 /** @type {ReturnType<typeof derive>} */

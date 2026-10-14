@@ -10,7 +10,7 @@ import { mix, theme } from "./theme.js";
 /** @typedef {(event: import("gpui-kit").ClickEvent, cx: import("gpui-kit").Context) => void} ClickHandler */
 
 const VARIANTS = /** @type {const} */ (["primary", "secondary", "outline", "ghost", "danger", "accent"]);
-const SIZES = /** @type {const} */ ({ sm: { h: 28, px: 10, text: 12, icon: 13, radius: 8 }, md: { h: 34, px: 14, text: 13, icon: 14, radius: 10 }, lg: { h: 40, px: 16, text: 14, icon: 16, radius: 10 } });
+const SIZES = /** @type {const} */ ({ sm: { h: 24, px: 8, text: 11, icon: 12, radius: 6 }, md: { h: 30, px: 12, text: 12, icon: 13, radius: 8 }, lg: { h: 36, px: 14, text: 13, icon: 14, radius: 8 } });
 
 /** @param {string} component @param {unknown} value @returns {Variant} */
 function variantOf(component, value) {
@@ -99,7 +99,7 @@ export class Button {
       .when(!disabled, (el) => el.hover((style) => style.bg(chrome.hover)).active((style) => style.bg(chrome.pressed)))
       .when(Boolean(tooltip), (el) => el.tooltip(tooltip))
       .when(Boolean(onClick), (el) => el.on_click((event, cx) => onClick(event, cx)))
-      .child(h_flex().h_full().w_full().gap(8).items_center().justify_center()
+      .child(h_flex().h_full().w_full().gap(6).items_center().justify_center()
         .when(Boolean(this.#icon), (el) => el.child(iconOf(this.#icon, s.icon)))
         .child(this.#uppercase ? label.toUpperCase() : label)
         .when(Boolean(this.#trailingIcon), (el) => el.child(iconOf(this.#trailingIcon, s.icon))));
@@ -192,12 +192,12 @@ export class Segmented {
   build(_cx) {
     if (!this.#options.length) throw new Error("Segmented options must be a non-empty array");
     const t = theme(), c = t.colors, onSelect = this.#onSelect;
-    return h_flex().p(3).gap(2).rounded(t.radius.control).bg(c.well).border(1).border_color(c.border)
+    return h_flex().p(2).gap(2).rounded(t.radius.control).bg(c.well).border(1).border_color(c.border)
       .when(this.#fill, (el) => el.w_full())
       .children(this.#options.map((option) => {
         const on = option.id === this.#selected;
         return BaseButton.new(`${this.#id}-${option.id}`)
-          .h(28).px(12).rounded(t.radius.chip).border(1)
+          .h(24).px(10).rounded(t.radius.chip).border(1)
           .border_color(on ? c.borderStrong : c.clear).bg(on ? c.raised : c.clear)
           .text_size(t.type.small).text_color(on ? c.bright : c.secondary)
           .when(this.#mono, (el) => el.font_family(t.fonts.mono))
@@ -244,7 +244,7 @@ export class Chip {
     const t = theme(), c = t.colors, accent = t.tone("accent");
     const fg = this.#selected ? accent.fg : c.secondary, onClick = this.#onClick, onRemove = this.#onRemove;
     const body = BaseButton.new(this.#id)
-      .h(28).px(10).rounded(t.radius.chip).text_size(t.type.small).text_color(fg)
+      .h(24).px(8).rounded(t.radius.chip).text_size(t.type.small).text_color(fg)
       .when(this.#mono, (el) => el.font_family(t.fonts.mono))
       .accessibility_label(label)
       .when(!this.#selected, (el) => el.hover((style) => style.text_color(c.foreground)))
@@ -254,10 +254,10 @@ export class Chip {
       .border_color(this.#selected ? accent.border : c.border).bg(this.#selected ? accent.bg : c.well)
       .child(body)
       .when(Boolean(onRemove), (el) => el.child(BaseButton.new(`${this.#id}-remove`)
-        .size(20).mr(4).rounded(6).text_color(fg).accessibility_label(`Remove ${label}`)
+        .size(16).mr(4).rounded(4).text_color(fg).accessibility_label(`Remove ${label}`)
         .hover((style) => style.bg(c.hover))
         .on_click((event, cx) => onRemove(event, cx))
-        .child(h_flex().size_full().items_center().justify_center().text_size(t.type.body).child("×"))));
+        .child(h_flex().size_full().items_center().justify_center().text_size(t.type.small).child("×"))));
   }
 }
 
@@ -269,7 +269,7 @@ export class Kbd {
   /** @param {import("gpui-kit").Context} _cx */
   build(_cx) {
     const t = theme(), c = t.colors;
-    return div().flex_shrink_0().px(6).py(2).rounded(6).bg(c.raised).border(1).border_color(c.borderStrong)
+    return div().flex_shrink_0().px(5).py(1).rounded(4).bg(c.raised).border(1).border_color(c.borderStrong)
       .text_size(t.type.caption).text_color(c.secondary).font_family(t.fonts.mono).child(this.#keys);
   }
 }
@@ -299,9 +299,9 @@ export class SearchField {
   /** @param {import("gpui-kit").Context} cx */
   build(cx) {
     const t = theme(), c = t.colors, hint = optionalText("SearchField", "hint", this.#hint);
-    return h_flex().id(this.#id).h(36).px(12).gap(8).items_center().rounded(t.radius.control)
+    return h_flex().id(this.#id).h(30).px(10).gap(8).items_center().rounded(t.radius.control)
       .bg(this.#surface === "well" ? c.well : c.card).border(1).border_color(c.border)
-      .when(Boolean(this.#icon), (el) => el.child(div().text_color(c.secondary).child(svg(this.#icon).size(14))))
+      .when(Boolean(this.#icon), (el) => el.child(div().text_color(c.secondary).child(svg(this.#icon).size(13))))
       .child(Input.new(this.#state).flex_1().min_w_0().text_size(t.type.body))
       .when(Boolean(hint), (el) => el.child(new Kbd(hint).build(cx)));
   }
@@ -339,13 +339,13 @@ export class ToggleRow {
       .accessibility_label(title).role("switch")
       .disabled(this.#disabled).when(this.#disabled, (el) => el.opacity(0.45))
       .when(Boolean(onChange), (el) => el.on_click((_event, cx) => onChange(!on, cx)))
-      .child(h_flex().w_full().px(14).py(12).gap(12).items_center()
+      .child(h_flex().w_full().px(12).py(9).gap(12).items_center()
         .child(v_flex().flex_1().min_w_0().gap(2).items_start()
           .child(div().text_size(t.type.body).text_color(c.bright).child(title))
           .when(Boolean(description), (el) => el.child(div().text_size(t.type.small).text_color(c.secondary).child(description))))
-        .child(h_flex().w(40).h(22).p(3).flex_shrink_0().rounded(t.radius.pill)
+        .child(h_flex().w(32).h(18).p(3).flex_shrink_0().rounded(t.radius.pill)
           .bg(on ? c.accent : c.raised).when(on, (el) => el.justify_end())
-          .child(div().size(16).rounded(t.radius.pill).bg(on ? c.onLight : c.secondary))));
+          .child(div().size(12).rounded(t.radius.pill).bg(on ? c.onLight : c.secondary))));
   }
 }
 
@@ -357,7 +357,7 @@ export class MenuList {
   #id;
   /** @type {({ id: string, label: string, icon?: string, meta?: string, checked?: boolean, danger?: boolean, disabled?: boolean, onSelect?: (cx: import("gpui-kit").Context) => void } | null)[]} */
   #items = [];
-  #width = 220;
+  #width = 200;
   #highlight;
 
   /** @param {string} id */
@@ -372,19 +372,19 @@ export class MenuList {
   /** @param {import("gpui-kit").Context} _cx */
   build(_cx) {
     const t = theme(), c = t.colors;
-    return v_flex().w(this.#width).p(6).gap(2).rounded(t.radius.well).bg(c.well).border(1).border_color(c.borderStrong)
+    return v_flex().w(this.#width).p(4).gap(1).rounded(t.radius.well).bg(c.well).border(1).border_color(c.borderStrong)
       .children(this.#items.map((item, index) => {
         if (!item) return div().mx(4).my(3).h(1).bg(c.border);
         const id = stableId("MenuList item", item.id), label = requiredText("MenuList", "item label", item.label);
         const lit = id === this.#highlight, onSelect = item.onSelect;
-        return BaseButton.new(`${this.#id}-${id}`).w_full().h(32).rounded(t.radius.chip)
+        return BaseButton.new(`${this.#id}-${id}`).w_full().h(28).rounded(t.radius.chip)
           .bg(lit ? c.raised : c.clear).accessibility_label(label)
           .disabled(Boolean(item.disabled)).when(Boolean(item.disabled), (el) => el.opacity(0.45))
           .when(!item.disabled, (el) => el.hover((style) => style.bg(c.raised)))
           .when(Boolean(onSelect), (el) => el.on_click((_event, cx) => onSelect(cx)))
-          .child(h_flex().size_full().px(10).gap(10).items_center()
+          .child(h_flex().size_full().px(8).gap(8).items_center()
             .text_size(t.type.body).text_color(item.danger ? t.tone("danger").fg : c.foreground)
-            .when(Boolean(item.icon), (el) => el.child(div().text_color(item.danger ? t.tone("danger").fg : c.secondary).child(svg(item.icon).size(14))))
+            .when(Boolean(item.icon), (el) => el.child(div().text_color(item.danger ? t.tone("danger").fg : c.secondary).child(svg(item.icon).size(13))))
             .child(div().flex_1().min_w_0().truncate().child(label))
             .when(Boolean(item.meta), (el) => el.child(div().flex_shrink_0().text_size(t.type.caption).text_color(c.tertiary).font_family(t.fonts.mono).child(item.meta)))
             .when(Boolean(item.checked), (el) => el.child(div().flex_shrink_0().text_color(c.accent).child("✓"))));
@@ -424,14 +424,14 @@ export class SelectTrigger {
     const value = requiredText("SelectTrigger", "value", this.#value);
     const label = optionalText("SelectTrigger", "label", this.#label);
     const t = theme(), c = t.colors, onClick = this.#onClick;
-    return BaseButton.new(this.#id).h(34).px(12).flex_shrink_0().rounded(t.radius.control)
+    return BaseButton.new(this.#id).h(30).px(10).flex_shrink_0().rounded(t.radius.control)
       .bg(this.#open ? c.raised : c.well).border(1).border_color(this.#open ? c.dashed : c.borderStrong)
       .accessibility_label(label ? `${label}: ${value}` : value)
       .when(this.#full, (el) => el.w_full())
       .disabled(this.#disabled).when(this.#disabled, (el) => el.opacity(0.45))
       .when(!this.#disabled, (el) => el.hover((style) => style.bg(c.raised)))
       .when(Boolean(onClick), (el) => el.on_click((event, cx) => onClick(event, cx)))
-      .child(h_flex().size_full().gap(10).items_center()
+      .child(h_flex().size_full().gap(8).items_center()
         .when(Boolean(label), (el) => el.child(div().flex_1().text_size(t.type.body).text_color(c.secondary).child(label)))
         .child(div().text_size(t.type.body).text_color(c.bright).when(this.#mono, (el) => el.font_family(t.fonts.mono)).child(value))
         .child(div().text_size(t.type.small).text_color(c.secondary).child(this.#open ? "⌃" : "⌄")));

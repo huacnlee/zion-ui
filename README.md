@@ -54,14 +54,14 @@ Icons are SVG paths relative to the application root, which is where gpui-shell 
 
 ## Theme
 
-Themes are named. The default, **zion**, is neutral graphite with one warm gold accent; `THEMES` lists what is available.
+Themes are named. The default, **zion**, is neutral graphite with one phosphor-green accent; `THEMES` lists what is available.
 
 `applyTheme(options)` installs the palette as gpui-shell's semantic tokens, so base and component widgets — inputs, Markdown, scrollbars — follow it, and makes it the palette every Zion component reads while it builds.
 
 ```js
-applyTheme();                              // zion: graphite with a warm gold accent
+applyTheme();                              // zion: graphite with a phosphor-green accent
 applyTheme({ theme: "zion" });         // the same, by name
-applyTheme({ accent: "#00ff41" });         // another accent; tints and edges follow
+applyTheme({ accent: "#e2b24f" });         // another accent; tints and edges follow
 applyTheme({ mono: "JetBrains Mono" });    // the monospace family for data
 applyTheme({ palette: { canvas: "#0f0f10" } });
 ```

@@ -18,11 +18,11 @@ export declare function mix(color: string, toward: string, amount: number): Colo
  */
 export declare function alpha(color: string, opacity: number): Color;
 /**
- * Zion, the default theme: neutral graphite surfaces and one warm gold
- * accent.
+ * Zion, the default theme: neutral graphite surfaces and one phosphor-green
+ * accent, the green of a terminal in the dark.
  *
  * Surfaces step by lightness, not by hue, so a screen keeps one temperature and
- * the accent is the only warm thing on it. `canvas` is what navigation sits on,
+ * the accent is the only colored thing on it. `canvas` is what navigation sits on,
  * `main` the deeper panel the work happens in, `card` and `raised` the steps
  * above it, and `well` the recess below it that fields and tracks sit in.
  */
@@ -35,11 +35,11 @@ export declare const DEFAULT_PALETTE: Readonly<Record<PaletteRole, string>>;
 export declare const THEMES: Readonly<Record<string, Readonly<Record<PaletteRole, string>>>>;
 /** Radii nest: the main panel, cards in it, wells in those, then controls. */
 export declare const RADIUS: Readonly<{
-    main: 18;
-    card: 16;
-    well: 12;
-    control: 10;
-    chip: 8;
+    main: 14;
+    card: 12;
+    well: 10;
+    control: 8;
+    chip: 6;
     pill: 999;
 }>;
 /**
@@ -48,13 +48,14 @@ export declare const RADIUS: Readonly<{
  * mixes them on one line.
  */
 export declare const TYPE: Readonly<{
-    caption: 11;
-    small: 12;
-    body: 13;
-    label: 14;
-    title: 15;
-    heading: 20;
-    display: 28;
+    caption: 10;
+    small: 11;
+    body: 12;
+    label: 13;
+    title: 14;
+    heading: 16;
+    stat: 20;
+    display: 22;
 }>;
 /**
  * The active theme. Components read it while they build, so a call to
@@ -95,21 +96,22 @@ export declare function theme(): {
         solid: import("gpui-kit").Color;
     };
     radius: Readonly<{
-        main: 18;
-        card: 16;
-        well: 12;
-        control: 10;
-        chip: 8;
+        main: 14;
+        card: 12;
+        well: 10;
+        control: 8;
+        chip: 6;
         pill: 999;
     }>;
     type: Readonly<{
-        caption: 11;
-        small: 12;
-        body: 13;
-        label: 14;
-        title: 15;
-        heading: 20;
-        display: 28;
+        caption: 10;
+        small: 11;
+        body: 12;
+        label: 13;
+        title: 14;
+        heading: 16;
+        stat: 20;
+        display: 22;
     }>;
     fonts: {
         mono: string;
@@ -167,21 +169,22 @@ export declare function applyTheme(options?: {
         solid: import("gpui-kit").Color;
     };
     radius: Readonly<{
-        main: 18;
-        card: 16;
-        well: 12;
-        control: 10;
-        chip: 8;
+        main: 14;
+        card: 12;
+        well: 10;
+        control: 8;
+        chip: 6;
         pill: 999;
     }>;
     type: Readonly<{
-        caption: 11;
-        small: 12;
-        body: 13;
-        label: 14;
-        title: 15;
-        heading: 20;
-        display: 28;
+        caption: 10;
+        small: 11;
+        body: 12;
+        label: 13;
+        title: 14;
+        heading: 16;
+        stat: 20;
+        display: 22;
     }>;
     fonts: {
         mono: string;

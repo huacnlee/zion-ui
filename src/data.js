@@ -31,7 +31,7 @@ export class Stat {
   #size;
 
   /** @param {string} value */
-  constructor(value) { this.#value = requiredText("Stat", "value", value); this.#size = theme().type.display; }
+  constructor(value) { this.#value = requiredText("Stat", "value", value); this.#size = theme().type.stat; }
   /** @param {string} text */
   note(text) { this.#note = text; return this; }
   /** @param {Tone} value */
@@ -41,9 +41,9 @@ export class Stat {
   /** @param {import("gpui-kit").Context} _cx */
   build(_cx) {
     const t = theme(), note = optionalText("Stat", "note", this.#note);
-    return h_flex().min_w_0().gap(12).items_end().font_family(t.fonts.mono)
+    return h_flex().min_w_0().gap(10).items_end().font_family(t.fonts.mono)
       .child(div().flex_shrink_0().text_size(this.#size).text_color(t.colors.bright).child(this.#value))
-      .when(Boolean(note), (el) => el.child(div().min_w_0().truncate().pb(Math.round(this.#size / 7)).text_size(t.type.body).text_color(t.tone(this.#tone).fg).child(note)));
+      .when(Boolean(note), (el) => el.child(div().min_w_0().truncate().pb(Math.round(this.#size / 8)).text_size(t.type.small).text_color(t.tone(this.#tone).fg).child(note)));
   }
 }
 
@@ -64,10 +64,10 @@ export class Badge {
   /** @param {import("gpui-kit").Context} _cx */
   build(_cx) {
     const t = theme(), tone = t.tone(this.#tone);
-    return h_flex().flex_shrink_0().h(24).px(10).gap(6).items_center().rounded(t.radius.pill)
-      .bg(tone.bg).border(1).border_color(tone.border).text_size(t.type.small).text_color(tone.fg)
+    return h_flex().flex_shrink_0().h(20).px(8).gap(5).items_center().rounded(t.radius.pill)
+      .bg(tone.bg).border(1).border_color(tone.border).text_size(t.type.caption).text_color(tone.fg)
       .when(this.#mono, (el) => el.font_family(t.fonts.mono))
-      .when(this.#dot, (el) => el.child(div().size(6).rounded(t.radius.pill).bg(tone.solid)))
+      .when(this.#dot, (el) => el.child(div().size(5).rounded(t.radius.pill).bg(tone.solid)))
       .child(this.#label);
   }
 }
@@ -87,9 +87,9 @@ export class Callout {
   /** @param {import("gpui-kit").Context} _cx */
   build(_cx) {
     const t = theme(), tone = t.tone(this.#tone);
-    return h_flex().w_full().min_h(36).px(14).py(8).gap(8).items_center().justify_center().rounded(t.radius.control)
-      .bg(tone.bg).text_size(t.type.body).text_color(tone.fg)
-      .when(Boolean(this.#icon), (el) => el.child(svg(this.#icon).size(14).flex_shrink_0()))
+    return h_flex().w_full().min_h(30).px(12).py(6).gap(6).items_center().justify_center().rounded(t.radius.control)
+      .bg(tone.bg).text_size(t.type.small).text_color(tone.fg)
+      .when(Boolean(this.#icon), (el) => el.child(svg(this.#icon).size(12).flex_shrink_0()))
       .child(div().min_w_0().child(this.#text));
   }
 }
@@ -99,7 +99,7 @@ export class Meter {
   #value;
   /** @type {Tone} */
   #tone = "accent";
-  #height = 6;
+  #height = 4;
   /** @param {number} value 0…1 */
   constructor(value) { this.#value = fraction("Meter", value); }
   /** @param {Tone} value */
@@ -120,7 +120,7 @@ export class TickBar {
   #ticks = 24;
   /** @type {Tone} */
   #tone = "accent";
-  #height = 14;
+  #height = 12;
   /** @param {number} value 0…1 */
   constructor(value) { this.#value = fraction("TickBar", value); }
   /** @param {number} count */
@@ -133,8 +133,8 @@ export class TickBar {
   build(_cx) {
     const t = theme(), on = Math.round(this.#value * this.#ticks);
     const fill = this.#tone === "neutral" ? t.colors.foreground : t.tone(this.#tone).solid;
-    return h_flex().h(this.#height).gap(3).items_stretch()
-      .children(Array.from({ length: this.#ticks }, (_, index) => div().w(4).rounded(2).bg(index < on ? fill : t.colors.raised)));
+    return h_flex().h(this.#height).gap(2).items_stretch()
+      .children(Array.from({ length: this.#ticks }, (_, index) => div().w(3).rounded(1).bg(index < on ? fill : t.colors.raised)));
   }
 }
 
@@ -142,7 +142,7 @@ export class TickBar {
 export class SegmentBar {
   /** @type {{ value: number, tone?: Tone, color?: import("gpui-kit").Color }[]} */
   #parts = [];
-  #height = 6;
+  #height = 4;
   /** @param {{ value: number, tone?: Tone, color?: import("gpui-kit").Color }[]} parts */
   constructor(parts) {
     if (!Array.isArray(parts) || !parts.length) throw new Error("SegmentBar parts must be a non-empty array");
@@ -153,7 +153,7 @@ export class SegmentBar {
   /** @param {import("gpui-kit").Context} _cx */
   build(_cx) {
     const t = theme(), total = this.#parts.reduce((sum, part) => sum + part.value, 0) || 1;
-    return h_flex().w_full().h(this.#height).gap(3)
+    return h_flex().w_full().h(this.#height).gap(2)
       .children(this.#parts.filter((part) => part.value > 0).map((part) => div().h_full().rounded(t.radius.pill)
         .bg(part.color ?? (part.tone === "neutral" || !part.tone ? t.colors.borderStrong : t.tone(part.tone).solid))
         .w(`${Math.round((part.value / total) * 1000) / 10}%`)));
@@ -175,16 +175,16 @@ export class Legend {
   /** @param {import("gpui-kit").Context} _cx */
   build(_cx) {
     const t = theme(), c = t.colors;
-    const swatch = (item) => div().size(10).flex_shrink_0().rounded(3)
+    const swatch = (item) => div().size(8).flex_shrink_0().rounded(2)
       .bg(item.color ?? (item.tone && item.tone !== "neutral" ? t.tone(item.tone).solid : c.tertiary));
     if (this.#inline) {
-      return h_flex().flex_wrap().gap(18).items_center().font_family(t.fonts.mono).text_size(t.type.small)
-        .children(this.#items.map((item) => h_flex().gap(8).items_center().child(swatch(item))
+      return h_flex().flex_wrap().gap(14).items_center().font_family(t.fonts.mono).text_size(t.type.small)
+        .children(this.#items.map((item) => h_flex().gap(6).items_center().child(swatch(item))
           .child(div().text_color(c.secondary).child(item.label))
           .when(Boolean(item.value), (el) => el.child(div().text_color(c.bright).child(item.value)))));
     }
-    return v_flex().w_full().gap(10).font_family(t.fonts.mono).text_size(t.type.body)
-      .children(this.#items.map((item) => h_flex().w_full().gap(10).items_center().child(swatch(item))
+    return v_flex().w_full().gap(8).font_family(t.fonts.mono).text_size(t.type.small)
+      .children(this.#items.map((item) => h_flex().w_full().gap(8).items_center().child(swatch(item))
         .child(div().flex_1().min_w_0().truncate().text_color(c.secondary).child(item.label))
         .when(Boolean(item.value), (el) => el.child(div().flex_shrink_0().text_color(c.bright).child(item.value)))));
   }
@@ -201,11 +201,11 @@ export class PropertyList {
   /** @param {import("gpui-kit").Context} _cx */
   build(_cx) {
     const t = theme(), c = t.colors;
-    return v_flex().w_full().font_family(t.fonts.mono).text_size(t.type.body)
+    return v_flex().w_full().font_family(t.fonts.mono).text_size(t.type.small)
       .children(this.#rows.map((row, index) => {
         const trailing = optionalRenderable("PropertyList", "trailing", row.trailing);
-        return h_flex().w_full().min_h(40).gap(16).items_center().when(index > 0, (el) => el.border_t(1).border_color(c.border))
-          .child(div().w(150).flex_shrink_0().truncate().text_color(c.secondary).child(row.label))
+        return h_flex().w_full().min_h(32).gap(12).items_center().when(index > 0, (el) => el.border_t(1).border_color(c.border))
+          .child(div().w(120).flex_shrink_0().truncate().text_color(c.secondary).child(row.label))
           .child(div().flex_1().min_w_0().truncate().text_color(row.tone ? t.tone(row.tone).fg : c.bright).child(row.value))
           .when(Boolean(trailing), (el) => el.child(trailing));
       }));
@@ -223,10 +223,10 @@ export class StatStrip {
   /** @param {import("gpui-kit").Context} _cx */
   build(_cx) {
     const t = theme(), c = t.colors;
-    return h_flex().w_full().flex_wrap().gap(32).items_start()
-      .children(this.#items.map((item) => v_flex().gap(4).min_w_0()
+    return h_flex().w_full().flex_wrap().gap(28).items_start()
+      .children(this.#items.map((item) => v_flex().gap(3).min_w_0()
         .child(div().text_size(t.type.small).text_color(c.secondary).child(item.label))
-        .child(div().text_size(t.type.heading - 2).font_family(t.fonts.mono).text_color(item.tone ? t.tone(item.tone).fg : c.bright).child(item.value))));
+        .child(div().text_size(t.type.heading).font_family(t.fonts.mono).text_color(item.tone ? t.tone(item.tone).fg : c.bright).child(item.value))));
   }
 }
 
@@ -247,19 +247,19 @@ export class Steps {
   build(_cx) {
     const t = theme(), c = t.colors, accent = t.tone("accent");
     const circle = (step, index) => step.done
-      ? h_flex().size(26).flex_shrink_0().rounded(t.radius.pill).bg(c.accent).text_color(c.onLight).items_center().justify_center().text_size(t.type.small).child("✓")
-      : h_flex().size(26).flex_shrink_0().rounded(t.radius.pill).border(1).border_dashed().border_color(accent.fg).text_color(accent.fg)
-        .items_center().justify_center().text_size(t.type.small).font_family(t.fonts.mono).child(String(index + 1));
-    const line = (done) => done ? div().flex_1().h(2).mx(8).bg(c.accent) : div().flex_1().h(0).mx(8).border_t(1).border_dashed().border_color(c.dashed);
-    return v_flex().w_full().gap(10)
-      .child(h_flex().w_full().px(40).items_center()
+      ? h_flex().size(20).flex_shrink_0().rounded(t.radius.pill).bg(c.accent).text_color(c.onLight).items_center().justify_center().text_size(t.type.caption).child("✓")
+      : h_flex().size(20).flex_shrink_0().rounded(t.radius.pill).border(1).border_dashed().border_color(accent.fg).text_color(accent.fg)
+        .items_center().justify_center().text_size(t.type.caption).font_family(t.fonts.mono).child(String(index + 1));
+    const line = (done) => done ? div().flex_1().h(1).mx(6).bg(c.accent) : div().flex_1().h(0).mx(6).border_t(1).border_dashed().border_color(c.dashed);
+    return v_flex().w_full().gap(8)
+      .child(h_flex().w_full().px(36).items_center()
         .children(this.#steps.flatMap((step, index) => index
           ? [line(Boolean(step.done && this.#steps[index - 1].done)), circle(step, index)]
           : [circle(step, index)])))
       .child(h_flex().w_full().items_start()
         .children(this.#steps.map((step) => v_flex().flex_1().min_w_0().gap(2).items_center()
-          .child(div().text_size(t.type.body).text_color(step.done ? c.bright : c.secondary).child(step.title))
-          .when(Boolean(step.detail), (el) => el.child(div().text_size(t.type.small).font_family(t.fonts.mono).text_color(c.tertiary).child(step.detail))))));
+          .child(div().text_size(t.type.small).text_color(step.done ? c.bright : c.secondary).child(step.title))
+          .when(Boolean(step.detail), (el) => el.child(div().text_size(t.type.caption).font_family(t.fonts.mono).text_color(c.tertiary).child(step.detail))))));
   }
 }
 
@@ -291,14 +291,14 @@ export class MetricTile {
   build(cx) {
     const t = theme(), c = t.colors, value = requiredText("MetricTile", "value", this.#value);
     const badge = optionalRenderable("MetricTile", "badge", this.#badge);
-    return v_flex().flex_1().min_w_0().p(18).gap(10).rounded(t.radius.well).bg(c.well).border(1).border_color(c.border)
+    return v_flex().flex_1().min_w_0().p(14).gap(7).rounded(t.radius.well).bg(c.well).border(1).border_color(c.border)
       .child(h_flex().gap(8).items_center()
-        .child(div().flex_1().min_w_0().truncate().text_size(t.type.body).text_color(c.foreground).child(this.#label))
+        .child(div().flex_1().min_w_0().truncate().text_size(t.type.small).text_color(c.foreground).child(this.#label))
         .when(Boolean(badge), (el) => el.child(badge)))
-      .child(div().text_size(t.type.display).text_color(c.bright).child(value))
-      .when(Boolean(this.#caption), (el) => el.child(div().text_size(t.type.small).text_color(c.secondary).child(this.#caption)))
-      .when(this.#meter !== undefined, (el) => el.child(new Meter(this.#meter).tone(this.#tone).height(4).build(cx)))
-      .when(Boolean(this.#footnote), (el) => el.child(div().text_size(t.type.small).text_color(c.secondary).child(this.#footnote)));
+      .child(div().text_size(t.type.stat).text_color(c.bright).child(value))
+      .when(Boolean(this.#caption), (el) => el.child(div().text_size(t.type.caption).text_color(c.secondary).child(this.#caption)))
+      .when(this.#meter !== undefined, (el) => el.child(new Meter(this.#meter).tone(this.#tone).height(3).build(cx)))
+      .when(Boolean(this.#footnote), (el) => el.child(div().text_size(t.type.caption).text_color(c.secondary).child(this.#footnote)));
   }
 }
 
@@ -327,11 +327,11 @@ export class EmptyState {
     const art = optionalRenderable("EmptyState", "art", this.#art);
     const description = optionalText("EmptyState", "description", this.#description);
     const children = requiredRenderables("EmptyState", "children", this.#children);
-    return v_flex().w_full().items_center().gap(8).py(12)
-      .when(Boolean(art), (el) => el.child(div().pb(16).child(art)))
-      .child(div().text_size(t.type.label + 2).font_medium().text_color(c.bright).child(this.#title))
-      .when(Boolean(description), (el) => el.child(div().max_w(520).text_center().text_size(t.type.label).text_color(c.secondary).child(description)))
-      .when(children.length > 0, (el) => el.child(v_flex().w_full().pt(16).gap(16).items_center().children(children)));
+    return v_flex().w_full().items_center().gap(6).py(8)
+      .when(Boolean(art), (el) => el.child(div().pb(12).child(art)))
+      .child(div().text_size(t.type.title).font_medium().text_color(c.bright).child(this.#title))
+      .when(Boolean(description), (el) => el.child(div().max_w(440).text_center().text_size(t.type.body).text_color(c.secondary).child(description)))
+      .when(children.length > 0, (el) => el.child(v_flex().w_full().pt(12).gap(14).items_center().children(children)));
   }
 }
 
@@ -350,8 +350,8 @@ export class ToneTile {
   /** @param {import("gpui-kit").Context} _cx */
   build(_cx) {
     const t = theme(), tone = t.tone(this.#tone), value = requiredText("ToneTile", "value", this.#value);
-    return v_flex().flex_1().min_w_0().px(14).py(10).gap(2).rounded(t.radius.control).bg(mix(t.colors.canvas, tone.solid, 0.1))
-      .child(div().text_size(t.type.body).text_color(tone.fg).child(this.#label))
+    return v_flex().flex_1().min_w_0().px(12).py(8).gap(1).rounded(t.radius.control).bg(mix(t.colors.canvas, tone.solid, 0.1))
+      .child(div().text_size(t.type.small).text_color(tone.fg).child(this.#label))
       .child(div().text_size(t.type.body).text_color(t.colors.bright).child(value));
   }
 }

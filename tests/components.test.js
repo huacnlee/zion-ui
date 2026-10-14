@@ -121,8 +121,8 @@ test("cards nest a lighter body inside the shell with concentric radii", () => {
     .trailing(new Badge("Live").tone("accent").build(cx)).body(el("body")).build(cx);
   const shellRadius = arg(card, "rounded");
   const body = descendants(card).find((item) => arg(item, "bg") === theme().colors.card);
-  expect(arg(body, "rounded")).toBe(shellRadius - 4);
-  expect(arg(card, "p")).toBe(4);
+  // Concentric corners: the inset body's radius is the shell's minus the gap.
+  expect(arg(body, "rounded")).toBe(shellRadius - arg(card, "p"));
   expect(texts(card)).toEqual(expect.arrayContaining(["Solar output", "kilowatts · today", "Live"]));
   expect(descendants(card).some((item) => calls(item, "border_dashed").length > 0)).toBe(true);
 });
